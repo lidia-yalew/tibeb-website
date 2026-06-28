@@ -125,8 +125,6 @@ export default function Contact() {
 
   return (
     <div className="bg-theme min-h-screen">
-      <Navbar />
-
       {/* ── HERO ── */}
       <section className="pt-[72px] relative overflow-hidden">
         <div className="relative py-24 px-6">

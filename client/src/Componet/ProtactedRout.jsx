@@ -1,9 +1,16 @@
-import { Navigate } from 'react-router-dom'
-import { useAuth } from '../Context/AuthContext'
+// Component/ProtactedRout.jsx
+import { Navigate, Outlet } from 'react-router-dom';
+import { useAuth } from '../Context/AuthContext';
 
-const ProtactedRout = ({ children }) => {
-  const { token } = useAuth()
-  return token ? children : <Navigate to="/admin" />
-}
+const ProtectedRoute = () => {
+  const { token } = useAuth();
+  
+  // Check if user is authenticated
+  if (!token) {
+    return <Navigate to="/admin" replace />;
+  }
+  
+  return <Outlet />;
+};
 
-export default ProtactedRout
+export default ProtectedRoute;

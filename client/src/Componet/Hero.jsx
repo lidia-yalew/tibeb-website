@@ -28,7 +28,7 @@ export default function Hero() {
       <div className="absolute -top-25 -right-25 w-[600px] h-[600px] rounded-full bg-[radial-gradient(circle,rgba(201,168,76,0.08)_0%,transparent_70%)] pointer-events-none" />
       <div className="absolute -bottom-20 -left-20 w-[400px] h-[400px] rounded-full bg-[radial-gradient(circle,rgba(26,35,126,0.06)_0%,transparent_70%)] pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto  py-12 flex-1 flex items-center w-full">
+      <div className="max-w-7xl mx-auto  py-12 px-4 flex-1 flex items-center w-full">
         <div className="grid lg:grid-cols-2 gap-12 items-center w-full">
           {/* LEFT */}
           <div

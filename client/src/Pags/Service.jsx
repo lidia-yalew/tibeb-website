@@ -148,8 +148,6 @@ const toggleExpand = (index) => {
 
   return (
     <div className="bg-theme min-h-screen">
-      <Navbar />
-
       {/* ── SERVICES HERO ── */}
       <section className="pt-[72px] relative overflow-hidden">
         <div className="relative min-h-[85vh] flex items-center justify-center px-6">
@@ -185,7 +183,7 @@ const toggleExpand = (index) => {
               <span className="text-secondary">Our</span>
               <span className="text-primary"> Services</span>
             </h1>
-            <p className="text-theme-light text-lg md:text-xl max-w-2xl mx-auto leading-relaxed animate-slide-up-delayed">
+            <p className="text-muted text-sm md:text-xl max-w-2xl mx-auto leading-relaxed animate-slide-up-delayed">
               Comprehensive consultancy, research, training, and institutional strengthening
               across Ethiopia's most vital sectors.
             </p>
@@ -206,7 +204,7 @@ const toggleExpand = (index) => {
               </div>
             </div>
             <div className="flex flex-wrap justify-center gap-4 mt-10 animate-slide-up-delayed-3">
-              <Link to="/services" className="group text-secondary-400 bg-primary font-bold px-2 md:px-8 py-3.5 rounded-full hover:shadow-lg hover:shadow-secondary/30 hover:scale-105 transition-all duration-300 flex items-center gap-2">
+              <Link to="/services" className="group text-secondary bg-primary font-bold px-2 md:px-8 py-3.5 rounded-full hover:shadow-lg hover:shadow-secondary/30 hover:scale-105 transition-all duration-300 flex items-center gap-2">
                 Explore Services
                 <svg width="18" height="18" viewBox="0 0 16 16" fill="none" className="group-hover:translate-x-1 transition-transform">
                   <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />

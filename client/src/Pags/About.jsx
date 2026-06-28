@@ -41,7 +41,6 @@ export default function About() {
 
   return (
     <div className="bg-theme min-h-screen">
-      <Navbar />
 
       {/* ── HERO ── */}
 <section className="relative min-h-screen overflow-hidden flex items-center pt-[78px] md:pt-[100px]">
@@ -72,7 +71,7 @@ export default function About() {
         <span className="text-secondary">Innovation &amp;</span>
         <span className="text-primary"> Impact</span>
       </h1>
-      <p className="text-theme-light text-sm md:text-base leading-relaxed max-w-[460px] mx-auto md:mx-0">
+      <p className="text-muted text-sm md:text-base leading-relaxed max-w-[460px] mx-auto md:mx-0">
         Transforming Ethiopia's vital sectors through evidence-based consultancy,
         research, and capacity building.
       </p>
@@ -489,7 +488,7 @@ export default function About() {
       position: absolute;
       top: 50%;
       left: 50%;
-      animation: orbit 25s ease-in-out infinite;
+      animation: orbit 30s ease-in-out infinite;
       animation-delay: var(--delay, 0s);
       animation-play-state: running;
       will-change: transform;

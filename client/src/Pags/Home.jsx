@@ -4,7 +4,7 @@ import Hero from '../Componet/Hero'
 
 function Home() {
   return (
-    <div><Navbar/><Hero/></div>
+    <div><Hero/></div>
   )
 }
 
