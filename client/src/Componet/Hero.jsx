@@ -64,7 +64,7 @@ export default function Hero() {
             {/* CTA Buttons */}
             <div className="flex flex-wrap  gap-1 md:gap-2 text-[12px] md:text-[16]">
               <Link
-                href="#services"
+                to="/services"
                 className="bg-card text-theme-light px-2 py-3.5 rounded-lg  font-semibold flex items-center gap-2 shadow-glow hover:bg-secondary hover:text-primary hover:-translate-y-0.5 transition-all duration-250 border-secondary border-2"
               >
                 Explore Our Services
@@ -73,8 +73,8 @@ export default function Hero() {
                 </svg>
               </Link>
               <Link
-                href="#about"
-                className="bg-transparent text-secondary px-7 py-3.5 rounded-lg font-semibold border-2 border-primary flex items-center gap-2 hover:bg-primary hover:text-white hover:-translate-y-0.5 transition-all duration-250"
+                to="about"
+                className="bg-transparent text-secondary px-4 md:px-7 py-3.5 rounded-lg font-semibold border-2 border-primary flex items-center gap-2 hover:bg-primary hover:text-white hover:-translate-y-0.5 transition-all duration-250"
               >
                 Learn More About Us
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">

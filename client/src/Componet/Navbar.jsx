@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import logo from "../assets/Img/logo.png"
 
 const navLinks = [
@@ -9,8 +9,7 @@ const navLinks = [
   { label: "Team", href: "/team" },
   { label: "Portfolio", href: "/portfolio" },
   { label: "Testimonials", href: "/testimonials" },
-  { label: "Contact", href: "/contact" },
-  { label: "Admin", href: "/admin" }, // ✅ ADDED ADMIN HERE
+  { label: "Contact", href: "/contact" }
 ];
 
 export default function Navbar() {
@@ -19,6 +18,7 @@ export default function Navbar() {
   const [theme, setTheme] = useState(() => {
     return localStorage.getItem("theme") || "light";
   });
+  const location = useLocation();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -65,40 +65,40 @@ export default function Navbar() {
             </div>
           </Link>
 
- {/* Desktop Nav */}
-<div className="hidden lg:flex items-center gap-3 flex-1 justify-center">
-  {navLinks.map((link) => {
-    const isActive = location.pathname === link.href;
-    const isAdmin = link.label === "Admin";
-    
-    return (
-      <Link
-        key={link.label}
-        to={link.href}
-        className={`relative px-3 py-2 text-sm font-medium transition-all duration-200 rounded-md ${
-          isAdmin 
-            ? `border-2 border-secondary hover:bg-secondary hover:text-white ${
-                isActive ? 'bg-secondary text-white' : 'text-secondary'
-              }`
-            : `hover:bg-[#EEF0FA] hover:text-secondary ${
-                isActive ? 'bg-[#EEF0FA] text-secondary' : 'text-primary'
-              }`
-        }`}
-        style={{
-          color: isAdmin 
-            ? (isActive ? '#fff' : '#C9A84C')
-            : (isActive ? 'var(--color-secondary)' : 'var(--color-primary)'),
-        }}
-      >
-        {link.label}
-        {/* Active dot indicator */}
-        {isActive && !isAdmin && (
-          <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-secondary animate-pulse" />
-        )}
-      </Link>
-    );
-  })}
-</div>
+          {/* Desktop Nav */}
+          <div className="hidden lg:flex items-center gap-3 flex-1 justify-center">
+            {navLinks.map((link) => {
+              const isActive = location.pathname === link.href;
+              const isAdmin = link.label === "Admin";
+
+              return (
+                <Link
+                  key={link.label}
+                  to={link.href}
+                  className={`relative px-3 py-2 text-sm font-medium transition-all duration-200 rounded-md ${
+                    isAdmin
+                      ? `border-2 border-secondary hover:bg-secondary hover:text-white ${
+                          isActive ? 'bg-secondary text-white' : 'text-secondary'
+                        }`
+                      : `hover:bg-[#EEF0FA] hover:text-secondary ${
+                          isActive ? 'bg-[#EEF0FA] text-secondary' : 'text-primary'
+                        }`
+                  }`}
+                  style={{
+                    color: isAdmin
+                      ? (isActive ? '#fff' : '#C9A84C')
+                      : (isActive ? 'var(--color-secondary)' : 'var(--color-primary)'),
+                  }}
+                >
+                  {link.label}
+                  {/* Active dot indicator */}
+                  {isActive && !isAdmin && (
+                    <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-secondary animate-pulse" />
+                  )}
+                </Link>
+              );
+            })}
+          </div>
 
           {/* Right side */}
           <div className="flex items-center gap-2 flex-shrink-0 ml-auto">
@@ -147,24 +147,27 @@ export default function Navbar() {
               borderColor: theme === "dark" ? "#374151" : "#e5e7eb",
             }}
           >
-            {navLinks.map((link) => (
-              <Link
-                key={link.label}
-                to={link.href}
-                onClick={() => setMobileOpen(false)}
-                className={`block py-3 text-sm font-medium border-b ${
-                  link.label === "Admin" 
-                    ? "text-secondary font-bold" 
-                    : "text-primary"
-                }`}
-                style={{
-                  color: link.label === "Admin" ? "#C9A84C" : "var(--color-primary)",
-                  borderColor: theme === "dark" ? "#374151" : "#f3f4f6",
-                }}
-              >
-                {link.label} {link.label === "Admin" && "🔑"}
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              const isActive = location.pathname === link.href;
+              return (
+                <Link
+                  key={link.label}
+                  to={link.href}
+                  onClick={() => setMobileOpen(false)}
+                  className={`block py-3 text-sm font-medium border-b ${
+                    link.label === "Admin"
+                      ? "text-secondary font-bold"
+                      : "text-primary"
+                  }`}
+                  style={{
+                    color: link.label === "Admin" ? "#C9A84C" : (isActive ? 'var(--color-secondary)' : 'var(--color-primary)'),
+                    borderColor: theme === "dark" ? "#374151" : "#f3f4f6",
+                  }}
+                >
+                  {link.label} {link.label === "Admin" && "🔑"}
+                </Link>
+              );
+            })}
             <div className="flex items-center justify-between mt-4">
               <Link
                 to="/contact"
@@ -195,7 +198,7 @@ export default function Navbar() {
           </div>
         )}
       </nav>
-      
+
       {/* IMPORTANT: This is where page content renders */}
       <main className="pt-[2px] min-h-screen">
         <Outlet />

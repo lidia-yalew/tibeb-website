@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import Navbar from "../Componet/Navbar";
 import axios from "axios";
+import all from "../assets/Img/all.png"
+import SEO from "../Componet/SEO";
+
 
 const clientTypes = [
   {
@@ -67,12 +70,12 @@ const contactInfo = [
   {
     icon: "📞",
     label: "Phone",
-    value: "+251 XXX XXX XXX",
+    value: "+251  950020373",
   },
   {
     icon: "✉️",
     label: "Email",
-    value: "info@tibebconsulting.com",
+    value: "tibebconsultancy@gmail.com",
   },
   {
     icon: "💼",
@@ -83,9 +86,14 @@ const contactInfo = [
 
 export default function Contact() {
   const [selectedType, setSelectedType] = useState("client");
-  const [form, setForm] = useState({ name: "", organization: "", email: "", subject: "", message: "" });
+ const [form, setForm] = useState({ name: "", organization: "", email: "", phone: "", subject: "", message: "" });
   const [status, setStatus] = useState(null);
   const sectionRefs = useRef([]);
+  useEffect(() => {
+  window.scrollTo(0, 0);
+}, []);
+
+const API = `${import.meta.env.VITE_API_URL}`;
 
   const activeType = clientTypes.find((t) => t.id === selectedType);
 
@@ -111,11 +119,12 @@ export default function Contact() {
     e.preventDefault();
     setStatus("loading");
     try {
-      await axios.post("http://localhost:5000/api/contact", {
-        name: form.name,
-        email: form.email,
-        message: `[${activeType.label}] | Org: ${form.organization} | Subject: ${form.subject}\n\n${form.message}`,
-      });
+      await axios.post(`${API}/contact`, {
+  name: form.name,
+  email: form.email,
+  phone: form.phone,
+  message: `[${activeType.label}] | Org: ${form.organization} | Subject: ${form.subject}\n\n${form.message}`,
+});
       setStatus("success");
       setForm({ name: "", organization: "", email: "", subject: "", message: "" });
     } catch {
@@ -124,47 +133,39 @@ export default function Contact() {
   };
 
   return (
-    <div className="bg-theme min-h-screen">
+    <div className="bg-theme min-h-screen top-0">
+       <SEO 
+        title="Contact Us"
+        description="Get in touch with Tibeb Consultancy for expert consulting, training, and project management services."
+        keywords="contact, email, phone, address, Ethiopia, consulting services"
+        url="https://www.tibeb.com/contact"
+      />
       {/* ── HERO ── */}
-      <section className="pt-[72px] relative overflow-hidden">
-        <div className="relative py-24 px-6">
-          {/* Background glow */}
-          <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full opacity-20 animate-pulse"
-              style={{ background: "radial-gradient(circle, var(--color-secondary) 0%, transparent 70%)" }} />
-            <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full opacity-10"
-              style={{ background: "radial-gradient(circle, var(--color-secondary) 0%, transparent 70%)" }} />
-          </div>
+      <section className="relative pt-[78px] md:pt-[100px] overflow-hidden min-h-[500px] md:min-h-[600px]">
+              {/* Full Background Image */}
+              <div className="absolute inset-0 z-0">
+                <img 
+                  src={all}
+                  alt="Consultant Team"
+                  className="w-full h-full object-cover fixed"
+                />
+                <div className="absolute inset-0 bg-black/10"></div>
+              </div>
 
-          <div className="max-w-4xl mx-auto text-center relative z-10">
-            
-            <h1 className="text-4xl md:text-5xl font-extrabold text-text mb-4 leading-tight">
-              Let's <span className="text-secondary">Work Together</span>
-            </h1>
-            <p className="text-primary  text-lg max-w-2xl mx-auto leading-relaxed">
-              Whether you're a client, partner, or looking to join our team —
-              we'd love to hear from you.
-            </p>
-
-            {/* Client type pills */}
-            <div className="flex flex-wrap justify-center gap-3 mt-8">
-              {clientTypes.map((t) => (
-                <div key={t.id} className="flex items-center gap-2 bg-card backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5">
-                  <span>{t.icon}</span>
-                  <span className="text-theme-light text-xs font-medium">{t.label}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Wave */}
-        <div className="relative -mt-1">
-          <svg viewBox="0 0 1440 60" fill="none" className="w-full h-[40px]" preserveAspectRatio="none">
-            <path d="M0 30 C360 60 720 0 1080 30 C1260 45 1380 35 1440 30 L1440 60 L0 60Z" fill="var(--color-bg)" />
-            <path d="M0 30 C360 60 720 0 1080 30 C1260 45 1380 35 1440 30" stroke="var(--color-secondary)" strokeWidth="2" fill="none" opacity="0.6" />
-          </svg>
-        </div>
+            {/* Content - Centered at Bottom */}
+<div className="relative z-10 max-w-7xl mx-auto px-4 h-full flex  justify-center py-50">
+  <div className="max-w-sm bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-4 shadow-2xl text-center">
+    {/* Title */}
+    <h1 className="text-xl md:text-4xl font-bold text-[#2C3E50] mb-3 leading-tight">
+      Let's <span className="text-[#D4A373]">Work Together</span>
+    </h1>
+    {/* Description */}
+    <p className="text-[#5D6D7E] text-sm leading-relaxed mb-0">
+      Whether you're a client, partner, or looking to join our team —
+      we'd love to hear from you.
+    </p>
+  </div>
+</div>
       </section>
 
     {/* ── CLIENT TYPE SELECTOR ── */}
@@ -177,7 +178,7 @@ export default function Contact() {
         <div className="h-0.5 w-8 bg-secondary rounded" />
       </div>
       <h2 className="text-2xl md:text-3xl font-extrabold text-primary">Select Your Profile</h2>
-      <p className="text-theme-light text-sm mt-2 max-w-md mx-auto">
+      <p className="text-secondary text-sm mt-2 max-w-md mx-auto">
         Tell us who you are so we can tailor the form to your needs
       </p>
     </div>
@@ -278,7 +279,16 @@ export default function Contact() {
                 className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl border border-theme bg-theme text-theme text-xs md:text-sm outline-none transition-all duration-200 hover:border-secondary focus:border-secondary"
               />
             </div>
-
+<div>
+  <label className="text-[10px] md:text-xs font-semibold text-theme-light mb-1 md:mb-1.5 block">Phone Number</label>
+  <input
+    name="phone"
+    value={form.phone}
+    onChange={handleChange}
+    placeholder="+251 9XX XXX XXX"
+    className="w-full px-3 md:px-4 py-2.5 md:py-3 rounded-xl border border-theme bg-theme text-theme text-xs md:text-sm outline-none transition-all duration-200 hover:border-secondary focus:border-secondary"
+  />
+</div>
             {/* Subject */}
             <div>
               <label className="text-[10px] md:text-xs font-semibold text-theme-light mb-1 md:mb-1.5 block">
@@ -396,8 +406,8 @@ export default function Contact() {
         </div>
 
         {/* Note based on client type */}
-        <div className="rounded-2xl p-4 md:p-5 border bg-secondary/5 border-secondary/20">
-          <div className="text-[10px] md:text-xs font-bold tracking-[2px] mb-2 text-secondary">
+        <div className="rounded-2xl p-4 md:p-5 border bg-secondary border-secondary/20">
+          <div className="text-[10px] md:text-xs font-bold tracking-[2px] mb-2 text-primary">
             {activeType.icon} NOTE FOR YOU
           </div>
           <p className="text-xs md:text-sm text-theme-light leading-relaxed">

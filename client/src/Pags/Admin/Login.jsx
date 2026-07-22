@@ -13,6 +13,8 @@ export default function Login() {
   const { login, token } = useAuth();
   const navigate = useNavigate();
 
+ const API = `${import.meta.env.VITE_API_URL}`;
+  
   // If already logged in, redirect to dashboard
   useEffect(() => {
     if (token) {
@@ -29,15 +31,14 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
     setError("");
-    
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/login", form);
+     const res = await axios.post(`${API}/auth/login`, form);
       
       // Check if login was successful
-      if (res.data.token) {
-        login(res.data.token);
-        navigate("/admin/dashboard");
-      } else {
+     if (res.data.token) {
+  login(res.data.token, res.data.user);   // pass user too
+  navigate("/admin/dashboard");
+}else {
         setError("Invalid response from server. Please try again.");
       }
     } catch (err) {
@@ -70,9 +71,9 @@ export default function Login() {
         </div>
          <button
           onClick={() => navigate('/')}
-          className="text-secondary underline items-center gap-2 transition-colors"
+          className="text-secondary items-center transition-colors"
         >
-          Back to Menu
+         - Back to Home
         </button>
         {/* Card */}
         <div className="bg-card border border-theme rounded-3xl px-8 py-8 shadow-card">
@@ -144,7 +145,11 @@ export default function Login() {
                 </button>
               </div>
             </div>
-
+<div className="text-right -mt-2">
+  <Link to="/admin/forgot-password" className="text-xs font-semibold text-secondary hover:underline">
+    Forgot Password?
+  </Link>
+</div>
             {/* Error */}
             {error && (
               <div className="flex items-center gap-2 p-3 rounded-xl text-xs font-medium bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">

@@ -2,13 +2,15 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
-const API = "http://localhost:5000/api";
+
 
 export default function Dashboard() {
   const [stats, setStats] = useState({ team: 0, portfolio: 0, testimonials: 0, messages: 0, unread: 0 });
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
 
+ const API = `${import.meta.env.VITE_API_URL}`
+ 
   useEffect(() => {
     const token = localStorage.getItem("token");
     const headers = { Authorization: `Bearer ${token}` };
@@ -36,7 +38,7 @@ export default function Dashboard() {
     { label: "Team Members", value: stats.team, icon: "👥", color: "#1A237E", path: "/admin/team", action: "Manage Team" },
     { label: "Portfolio Projects", value: stats.portfolio, icon: "📋", color: "#C9A84C", path: "/admin/portfolio", action: "Manage Portfolio" },
     { label: "Testimonials", value: stats.testimonials, icon: "💬", color: "#1A237E", path: "/admin/testimonials", action: "Manage Testimonials" },
-    { label: "Messages", value: stats.messages, icon: "📬", color: "#C9A84C", path: "/admin/messages", action: `${stats.unread} unread`, badge: stats.unread },
+    { label: "Messages", icon: "📬", color: "#C9A84C", path: "/admin/messages", action: `${stats.unread} unread`, badge: stats.unread },
   ];
 
   const quickActions = [

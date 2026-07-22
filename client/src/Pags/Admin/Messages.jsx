@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useOutletContext } from 'react-router-dom';
 
-const API = "http://localhost:5000/api/contact";
+
 const token = () => localStorage.getItem("token");
 const headers = () => ({ Authorization: `Bearer ${token()}` });
+
+
 
 export default function Messages() {
   const [messages, setMessages] = useState([]);
@@ -12,6 +15,10 @@ export default function Messages() {
   const [filter, setFilter] = useState("all"); // all | unread | read
   const [search, setSearch] = useState("");
   const [toast, setToast] = useState(null);
+ const API = `${import.meta.env.VITE_API_URL}/contact`;
+
+  const context = useOutletContext();
+  const refetchUnread = context?.refetchUnread || (() => {});
 
   const showToast = (msg, type = "success") => {
     setToast({ msg, type });
@@ -35,6 +42,7 @@ export default function Messages() {
       setMessages((prev) => prev.map((m) => m.id === msg.id ? { ...m, is_read: true } : m));
       if (selected?.id === msg.id) setSelected({ ...msg, is_read: true });
       showToast("Marked as read");
+      refetchUnread();
     } catch { showToast("Failed to update", "error"); }
   };
 
@@ -43,10 +51,23 @@ export default function Messages() {
     handleMarkRead(msg);
   };
 
+  const handleDelete = async (msg, e) => {
+    if (e) e.stopPropagation();
+    if (!window.confirm(`Delete message from ${msg.name}? This cannot be undone.`)) return;
+    try {
+      await axios.delete(`${API}/${msg.id}`, { headers: headers() });
+      setMessages((prev) => prev.filter((m) => m.id !== msg.id));
+      if (selected?.id === msg.id) setSelected(null);
+      showToast("Message deleted");
+      refetchUnread();
+    } catch { showToast("Failed to delete message", "error"); }
+  };
+
   const filtered = messages.filter((m) => {
     const matchFilter = filter === "all" ? true : filter === "unread" ? !m.is_read : m.is_read;
     const matchSearch = m.name?.toLowerCase().includes(search.toLowerCase()) ||
       m.email?.toLowerCase().includes(search.toLowerCase()) ||
+      m.phone?.toLowerCase().includes(search.toLowerCase()) ||
       m.message?.toLowerCase().includes(search.toLowerCase());
     return matchFilter && matchSearch;
   });
@@ -114,7 +135,7 @@ export default function Messages() {
       {/* Filters & search */}
       <div className="flex flex-wrap gap-3 items-center">
         <input value={search} onChange={(e) => setSearch(e.target.value)}
-          placeholder="🔍 Search by name, email or message..."
+          placeholder="🔍 Search by name, email, phone or message..."
           className="px-4 py-2 rounded-xl border text-sm outline-none flex-1 min-w-[200px]"
           style={{ background: "var(--color-card)", borderColor: "var(--color-border)", color: "var(--color-text)" }} />
 
@@ -163,7 +184,7 @@ export default function Messages() {
                 const isSelected = selected?.id === m.id;
                 return (
                   <div key={m.id} onClick={() => handleSelect(m)}
-                    className="flex items-start gap-3 p-4 cursor-pointer transition-all hover:bg-[var(--color-bg-light)]"
+                    className="flex items-start gap-3 p-4 cursor-pointer transition-all hover:bg-[var(--color-bg-light)] group"
                     style={{
                       background: isSelected ? "var(--color-primary)08" : "transparent",
                       borderLeft: isSelected ? "3px solid var(--color-primary)" : "3px solid transparent",
@@ -190,8 +211,26 @@ export default function Messages() {
                         <span className="text-[10px] text-theme-light flex-shrink-0">{formatDate(m.created_at)}</span>
                       </div>
                       <div className="text-xs text-theme-light truncate">{m.email}</div>
+                      {m.phone && (
+                        <div className="text-xs text-theme-light truncate flex items-center gap-1 mt-0.5">
+                          <span>📞</span>{m.phone}
+                        </div>
+                      )}
                       <div className="text-xs text-theme-light truncate mt-0.5 line-clamp-1">{m.message}</div>
                     </div>
+
+                    {/* Delete button */}
+                    <button
+                      onClick={(e) => handleDelete(m, e)}
+                      className="flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center transition-all hover:bg-red-50"
+                      style={{ color: "#DC2626" }}
+                      title="Delete message"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                        <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14ZM10 11v6M14 11v6"
+                          stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </button>
                   </div>
                 );
               })}
@@ -237,6 +276,18 @@ export default function Messages() {
                       )}
                     </div>
                     <div className="text-sm text-theme-light mt-0.5">{selected.email}</div>
+                    {selected.phone && (
+                      <div className="text-sm text-theme-light mt-0.5 flex items-center gap-1.5">
+                        <span>📞</span>
+                        <a
+                          href={`tel:${selected.phone}`}
+                          className="font-medium hover:underline"
+                          style={{ color: "var(--color-primary)" }}
+                        >
+                          {selected.phone}
+                        </a>
+                      </div>
+                    )}
                     <div className="text-xs text-theme-light mt-0.5">
                       {new Date(selected.created_at).toLocaleDateString("en-US", {
                         weekday: "long", year: "numeric", month: "long", day: "numeric",
@@ -257,26 +308,11 @@ export default function Messages() {
 
               {/* Reply actions */}
               <div className="px-6 py-4 border-t border-theme">
-                <div className="text-xs font-bold tracking-[2px] text-secondary mb-3">REPLY OPTIONS</div>
-                <div className="flex flex-wrap gap-3">
-                  <a href={`mailto:${selected.email}?subject=Re: Your message to Tibeb Consultancy`}
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90"
-                    style={{ background: "var(--color-primary)" }}>
-                    ✉️ Reply by Email
-                  </a>
-                  <a href={`tel:${selected.phone || ""}`}
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold border transition-all hover:opacity-90"
-                    style={{ borderColor: "var(--color-primary)", color: "var(--color-primary)" }}>
-                    📞 Call
-                  </a>
-                  {!selected.is_read && (
-                    <button onClick={() => handleMarkRead(selected)}
-                      className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold border transition-all"
-                      style={{ borderColor: "#0F6E56", color: "#0F6E56" }}>
-                      ✓ Mark as Read
-                    </button>
-                  )}
-                </div>
+                <button onClick={() => handleDelete(selected)}
+                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold border transition-all hover:opacity-90 ml-auto"
+                    style={{ borderColor: "#DC2626", color: "#DC2626" }}>
+                    🗑️ Delete Message
+                  </button>
               </div>
             </div>
           )}

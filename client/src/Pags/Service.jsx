@@ -1,114 +1,83 @@
 import { useEffect, useRef, useState } from "react";
 import Navbar from "../Componet/Navbar";
 import { Link } from "react-router-dom";
+import Footer from "../Componet/Footer";
+import SEO from "../Componet/SEO";
+
+
+
 
 const sectors = [
   {
     id: "cross",
-    icon: "🏛️",
-    color: "#1A237E",
-    label: "CROSS-CUTTING",
-    title: "Institutional Development Services",
-    subtitle: "Corporate · Government · NGO & International Development",
-    tagline: "End-to-end tailored services for modern institutional governance and execution across all sectors.",
-    whoWeServe: "We systematically translate insights across three major ecosystems: the highly competitive Corporate Business Sector, the policy-driven Government Sector, and the compliance-intensive NGO & International development domain.",
-    impact: "52+ professionals · 3 sectors · 7 core service lines",
-    clients: ["CARD (Addis Ababa, Adama, Dire Dawa)", "Diverse Tech Solution PLC", "Nexsuses Trading & Consultancy", "Tena Adam Gardens PLC", "DESHET Education & Training S.C."],
+    label: "Agriculture & Food Security",
+    icon: "🌾",
+    color: "#1A7A3A",
+    tagline: "Building resilience from field to fork",
+    whoWeServe: "Smallholder farmers, agribusinesses, cooperatives, and government extension services.",
     services: [
-      { icon: "🗺️", name: "Organizational Model & Strategic Advisory", desc: "Diagnosing organizational structures and designing fit-for-purpose models aligned to your strategic direction." },
-      { icon: "📋", name: "Project Management & Research Development", desc: "End-to-end project design, planning, implementation oversight, and research coordination." },
-      { icon: "📜", name: "Policy & Strategy Analysis", desc: "Rigorous analysis of policies, strategies, and regulatory frameworks to inform evidence-based decision-making." },
-      { icon: "📈", name: "Monitoring, Evaluation & Learning (MEL)", desc: "Designing and implementing adaptive MEL systems that drive continuous learning and accountability." },
-      { icon: "💾", name: "Data Management, Analytics & Visualization", desc: "Transforming raw data into actionable insights through robust management systems and compelling dashboards." },
-      { icon: "🎓", name: "Training & Capacity Building", desc: "Designing and delivering impactful programs that build lasting institutional capability." },
-      { icon: "💼", name: "Finance, HR & Administrative Management", desc: "Strengthening financial, human resource, and administrative systems for operational excellence." },
-    ],
-  },
-  {
-    id: "data",
-    icon: "🤖",
-    color: "#C9A84C",
-    label: "DATA & DIGITAL",
-    title: "Data Intelligence, Research & Statistical Services",
-    subtitle: "Powering decisions with evidence, analytics and digital innovation",
-    tagline: "Cutting-edge data science, research and digital transformation solutions for modern institutions.",
-    whoWeServe: "We support organizations that need to move from intuition to evidence — delivering rigorous quantitative and qualitative research, advanced analytics, and machine learning solutions tailored to Ethiopia's development context.",
-    impact: "6 PhD data scientists · National & international projects · Real-time dashboards",
-    clients: ["Diverse Tech Solution PLC", "Panacea Business & Engineering PLC", "IBS 19th Biennial Conference (Addis Ababa, 2025)", "Oda Addi Trade PLC"],
-    services: [
-      { icon: "📱", name: "Digital Data Collection & Management", desc: "Designing digital data collection tools and robust management systems for clean, reliable data." },
-      { icon: "📊", name: "Data Visualization & Dashboard Development", desc: "Building interactive dashboards and visual reports that communicate complex data clearly to decision-makers." },
-      { icon: "🔬", name: "Data Science & Advanced Analytics", desc: "Applying statistical modelling, machine learning, and advanced analytics to uncover patterns and insights." },
-      { icon: "🔍", name: "Quantitative & Qualitative Research", desc: "Conducting rigorous mixed-methods research using internationally validated frameworks and tools." },
-      { icon: "🧠", name: "Machine Learning, AI & Predictive Modeling", desc: "Building predictive models and AI solutions to optimize operations and forecast outcomes." },
-      { icon: "🔄", name: "Adaptive MEL Systems Development & Support", desc: "Developing responsive monitoring systems that learn and adapt to evolving program contexts." },
-    ],
+      { name: "Value Chain Analysis", icon: "🔗", desc: "End-to-end mapping and optimization of agricultural value chains." },
+      { name: "Food Security Assessment", icon: "📊", desc: "Comprehensive food security and nutrition surveys." },
+      { name: "Agri-Business Development", icon: "📈", desc: "Supporting agri-enterprises with business planning and market access." },
+      { name: "Extension Services", icon: "👨‍🌾", desc: "Strengthening agricultural extension and advisory services." },
+    ]
   },
   {
     id: "health",
+    label: "Health & Nutrition",
     icon: "🏥",
-    color: "#1A237E",
-    label: "HEALTH",
-    title: "Health Sector Services",
-    subtitle: "Strengthening Ethiopia's health systems from policy to practice",
-    tagline: "Comprehensive health consultancy spanning policy development, workforce training, and health data analytics.",
-    whoWeServe: "We serve Ethiopia's Ministry of Health, regional health bureaus, NGOs, hospitals, and international health development partners — bringing both deep local knowledge and global health frameworks.",
-    impact: "Policy to practice · Workforce development · Evidence-based programming",
-    clients: ["EECMY-DASSC (SRA4C terminal evaluation)", "Regional Health Bureaus", "NGO health programs"],
+    color: "#C0392B",
+    tagline: "Strengthening health systems for better outcomes",
+    whoWeServe: "Government health institutions, NGOs, community-based organizations, and health programs.",
     services: [
-      { icon: "📜", name: "Health Policy & Strategy Development", desc: "Formulating evidence-based health policies, strategies and implementation frameworks for sustainable health outcomes." },
-      { icon: "🏗️", name: "Health Systems Strengthening", desc: "Diagnosing and strengthening health system building blocks including governance, financing, and service delivery." },
-      { icon: "🎯", name: "Public Health Program Design & Evaluation", desc: "Designing robust public health programs and conducting rigorous evaluations that generate actionable learning." },
-      { icon: "👩‍⚕️", name: "Healthcare Workforce Development & Training", desc: "Building the knowledge and skills of health professionals through tailored, evidence-based training programs." },
-      { icon: "🔬", name: "Health Research & Operational Studies", desc: "Conducting applied health research and operational studies that inform policy and program decisions." },
-      { icon: "📊", name: "Health Data Analysis & Visualization", desc: "Analyzing health data and producing compelling visualizations that support reporting and strategic planning." },
-      { icon: "⭐", name: "Healthcare Quality Improvement Initiatives", desc: "Implementing structured quality improvement approaches that elevate patient care and health outcomes." },
-    ],
+      { name: "Health System Strengthening", icon: "🏛️", desc: "Improving health governance, financing, and service delivery." },
+      { name: "Nutrition Programs", icon: "🍎", desc: "Design and evaluation of nutrition interventions." },
+      { name: "M&E for Health Programs", icon: "📋", desc: "Monitoring and evaluation frameworks for health projects." },
+      { name: "Community Health", icon: "👥", desc: "Community-based health promotion and disease prevention." },
+    ]
   },
   {
     id: "education",
+    label: "Education & Training",
     icon: "🎓",
-    color: "#C9A84C",
-    label: "EDUCATION",
-    title: "Education Sector Services",
-    subtitle: "Transforming learning systems and building educational excellence",
-    tagline: "Quality assurance, institutional strengthening, and capacity building for Ethiopia's education sector.",
-    whoWeServe: "We support Ministries of Education, regional education bureaus, schools, universities, and education NGOs — driving quality improvement from classroom to policy level.",
-    impact: "Recognized by Mahibere Kidusan Hawassa Center · Lab setup · Digital transformation",
-    clients: ["Mahibere Kidusan Hawassa Center (MKHC)", "DESHET Education & Training S.C.", "Leap Learning Applications (LLA)"],
+    color: "#2980B9",
+    tagline: "Empowering through knowledge and skills",
+    whoWeServe: "Educational institutions, training centers, youth programs, and government ministries.",
     services: [
-      { icon: "✅", name: "Education Quality Assurance Assessment", desc: "Conducting comprehensive quality audits of educational institutions against national and international standards." },
-      { icon: "🔍", name: "School System Inspection & Performance Assessment", desc: "Systematic inspection of school operations, leadership, teaching quality and student outcomes." },
-      { icon: "📚", name: "Capacity Building & Professional Development Training", desc: "Empowering educators and school leaders with cutting-edge pedagogical and management skills." },
-      { icon: "🗺️", name: "Strategic Planning & School Improvement Programs", desc: "Facilitating school-level strategic planning processes and designing structured improvement programs." },
-      { icon: "🔭", name: "School Science Laboratory Development & Setup", desc: "Designing, equipping, and preparing science labs including manual preparation and teacher orientation." },
-      { icon: "🏫", name: "School Pedagogical Center Establishment", desc: "Establishing and organizing school pedagogical centers to support continuous teacher development." },
-      { icon: "💻", name: "Educational Management Information System", desc: "Developing and implementing EMIS platforms for data-driven school and system management." },
-      { icon: "🌟", name: "Student Talent Identification & Development", desc: "Designing systems to identify, develop and manage student talent for national competitiveness." },
-      { icon: "🏆", name: "School Competitiveness & Institutional Transformation", desc: "Implementing transformation programs that build competitive, sustainable, high-performing schools." },
-    ],
+      { name: "Curriculum Development", icon: "📚", desc: "Design of competency-based curricula and learning materials." },
+      { name: "Teacher Training", icon: "👨‍🏫", desc: "Professional development for educators and trainers." },
+      { name: "Youth Empowerment", icon: "🌟", desc: "Skills development and livelihood programs for youth." },
+      { name: "Education System Assessment", icon: "🔍", desc: "Evaluation of education systems and learning outcomes." },
+    ]
   },
   {
-    id: "agriculture",
-    icon: "🌾",
-    color: "#1A237E",
-    label: "AGRICULTURE",
-    title: "Agriculture Sector Services",
-    subtitle: "Growing sustainable food systems and resilient rural livelihoods",
-    tagline: "From climate-smart farming to agribusiness development — supporting Ethiopia's agricultural transformation.",
-    whoWeServe: "We serve Ethiopia's Ministry of Agriculture, development agencies, NGOs, farmer cooperatives, and agribusinesses — bridging the gap between smallholder farmers and modern market systems.",
-    impact: "Climate-smart · Value chain development · Food security programming",
-    clients: ["EECMY-DASSC SRA4C Project (climate resilience evaluation)", "Agricultural development NGOs & partners"],
+    id: "governance",
+    label: "Governance & Institutions",
+    icon: "🏛️",
+    color: "#8E44AD",
+    tagline: "Building responsive and accountable institutions",
+    whoWeServe: "Government agencies, civil society organizations, and public sector institutions.",
     services: [
-      { icon: "🌍", name: "Climate-Smart & Sustainable Agriculture", desc: "Designing and implementing climate-adaptive agricultural practices that build long-term food security and resilience." },
-      { icon: "🔗", name: "Agricultural Value Chain Development", desc: "Analysing and strengthening agricultural value chains to improve productivity, quality and market access." },
-      { icon: "🍽️", name: "Food Security & Livelihoods Programming", desc: "Designing integrated food security programs that address root causes of hunger and improve rural livelihoods." },
-      { icon: "📈", name: "Agribusiness Development & Market Linkage", desc: "Supporting agribusinesses with strategic planning, market linkage, and business development services." },
-      { icon: "👨‍🌾", name: "Farmer Training & Extension Services", desc: "Delivering practical, context-appropriate training to farmers and extension workers for improved productivity." },
-      { icon: "📜", name: "Agricultural Policy & Investment Advisory", desc: "Providing evidence-based advisory on agricultural policy, investment planning, and sector development strategies." },
-      { icon: "🏘️", name: "Rural Development Initiatives", desc: "Designing and implementing integrated rural development programs that address social, economic and infrastructure needs." },
-    ],
+      { name: "Institutional Assessment", icon: "📋", desc: "Capacity assessments and organizational development." },
+      { name: "Policy Analysis", icon: "📝", desc: "Policy research, analysis, and reform support." },
+      { name: "Governance Reform", icon: "⚖️", desc: "Support for governance and public sector reforms." },
+      { name: "Civil Society Strengthening", icon: "🤝", desc: "Capacity building for CSOs and community organizations." },
+    ]
   },
+  {
+    id: "data",
+    label: "Data & Analytics",
+    icon: "📊",
+    color: "#F39C12",
+    tagline: "Turning data into actionable insights",
+    whoWeServe: "Research institutions, development organizations, and government agencies.",
+    services: [
+      { name: "Data Collection & Analysis", icon: "📊", desc: "Survey design, data collection, and statistical analysis." },
+      { name: "M&E Systems", icon: "📈", desc: "Design and implementation of monitoring and evaluation systems." },
+      { name: "Data Visualization", icon: "📉", desc: "Creating impactful data visualizations and dashboards." },
+      { name: "Research & Studies", icon: "🔬", desc: "Qualitative and quantitative research for development." },
+    ]
+  }
 ];
 
 const audiences = [
@@ -147,7 +116,14 @@ const toggleExpand = (index) => {
   const activeSector = sectors.find((s) => s.id === active);
 
   return (
+    <> <SEO 
+        title="Our Team"
+        description="Meet the expert team at Tibeb Consultancy - experienced professionals in consulting and training."
+        keywords="team, consultants, experts, Ethiopia, professionals"
+        url="https://www.tibeb.com/team"
+      />
     <div className="bg-theme min-h-screen">
+     
       {/* ── SERVICES HERO ── */}
       <section className="pt-[72px] relative overflow-hidden">
         <div className="relative min-h-[85vh] flex items-center justify-center px-6">
@@ -204,15 +180,13 @@ const toggleExpand = (index) => {
               </div>
             </div>
             <div className="flex flex-wrap justify-center gap-4 mt-10 animate-slide-up-delayed-3">
-              <Link to="/services" className="group text-secondary bg-primary font-bold px-2 md:px-8 py-3.5 rounded-full hover:shadow-lg hover:shadow-secondary/30 hover:scale-105 transition-all duration-300 flex items-center gap-2">
-                Explore Services
+              <Link to="/Contact" className="group text-secondary bg-primary font-bold px-2 md:px-8 py-3.5 rounded-full hover:shadow-lg hover:shadow-secondary/30 hover:scale-105 transition-all duration-300 flex items-center gap-2">
+                Contact Us
                 <svg width="18" height="18" viewBox="0 0 16 16" fill="none" className="group-hover:translate-x-1 transition-transform">
                   <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </Link>
-              <a href="/contact" className="backdrop-blur-sm border border-primary text-theme-light font-semibold px-8 py-3.5 rounded-full hover:bg-secondary transition-all duration-300 hover:scale-105">
-                Contact Us
-              </a>
+             
             </div>
           </div>
 
@@ -293,19 +267,7 @@ const toggleExpand = (index) => {
             <p className="text-theme-light text-[10px] md:text-xs leading-relaxed">{activeSector.whoWeServe}</p>
           </div>
 
-          <div className="bg-card border border-theme rounded-2xl p-4 md:p-6">
-            <div className="text-[10px] md:text-xs font-bold tracking-[2px] mb-3 md:mb-4" style={{ color: activeSector.color }}>
-              ✅ REAL CLIENT EXPERIENCE
-            </div>
-            <div className="space-y-2">
-              {activeSector.clients.map((c, i) => (
-                <div key={i} className="flex items-start gap-2">
-                  <div className="w-1 h-1 md:w-1.5 md:h-1.5 rounded-full flex-shrink-0 mt-1.5" style={{ background: activeSector.color }} />
-                  <span className="text-[10px] md:text-xs text-theme-light leading-relaxed">{c}</span>
-                </div>
-              ))}
-            </div>
-          </div>
+         
 
           <a href="/contact"
             className="flex items-center justify-center gap-2 w-full py-3 md:py-4 rounded-2xl font-bold text-white text-xs md:text-sm transition-all hover:opacity-90 hover:-translate-y-0.5"
@@ -431,16 +393,16 @@ const toggleExpand = (index) => {
           <p className="text-white/70 mb-6 max-w-xl mx-auto">
             Our multidisciplinary team is ready to design a tailored intervention that meets your organization's unique needs.
           </p>
-          <a href="/contact"
+          <Link to="/contact"
             className="inline-flex items-center gap-2 bg-secondary text-primary font-bold px-8 py-3.5 rounded-xl hover:opacity-90 transition-all shadow-glow">
             Get in Touch
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-          </a>
+          </Link>
         </div>
       </section>
-
+      <Footer/>
       <style>{`
         .fade-up { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
         .fade-up.animate-in { opacity: 1; transform: translateY(0); }
@@ -460,5 +422,6 @@ const toggleExpand = (index) => {
         @keyframes slideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
       `}</style>
     </div>
+    </>
   );
 }

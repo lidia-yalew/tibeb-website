@@ -12,6 +12,9 @@ export default function ChangePassword() {
     new: false,
     confirm: false,
   });
+
+   const API = `${import.meta.env.VITE_API_URL}`
+
   const [form, setForm] = useState({
     currentPassword: "",
     newPassword: "",
@@ -48,7 +51,7 @@ export default function ChangePassword() {
     setLoading(true);
     try {
       const res = await axios.put(
-        "http://localhost:5000/api/auth/change-password",
+        `${API}/auth/change-password`,
         {
           currentPassword: form.currentPassword,
           newPassword: form.newPassword,

@@ -7,39 +7,22 @@ export function AuthProvider({ children }) {
   const [token, setToken] = useState(() => {
     return localStorage.getItem("token") || null;
   });
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(() => {
+    const saved = localStorage.getItem("user");
+    return saved ? JSON.parse(saved) : null;
+  });
+  const [loading, setLoading] = useState(false);
 
-  // Decode JWT token to get user info
-  const decodeToken = (token) => {
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      return { 
-        name: payload.name || "Admin", 
-        email: payload.email || "admin@tibeb.com", 
-        role: payload.role || "admin"
-      };
-    } catch (error) {
-      console.error("Failed to decode token:", error);
-      return { name: "Admin", email: "admin@tibeb.com", role: "admin" };
-    }
-  };
-
-  useEffect(() => {
-    if (token) {
-      setUser(decodeToken(token));
-    }
-    setLoading(false);
-  }, [token]);
-
-  const login = (newToken) => {
+  const login = (newToken, newUser) => {
     localStorage.setItem("token", newToken);
+    localStorage.setItem("user", JSON.stringify(newUser));
     setToken(newToken);
-    setUser(decodeToken(newToken));
+    setUser(newUser);
   };
 
   const logout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("user");
     setToken(null);
     setUser(null);
   };
@@ -47,13 +30,13 @@ export function AuthProvider({ children }) {
   const isAuthenticated = !!token;
 
   return (
-    <AuthContext.Provider value={{ 
-      token, 
-      user, 
-      login, 
-      logout, 
+    <AuthContext.Provider value={{
+      token,
+      user,
+      login,
+      logout,
       loading,
-      isAuthenticated 
+      isAuthenticated
     }}>
       {children}
     </AuthContext.Provider>

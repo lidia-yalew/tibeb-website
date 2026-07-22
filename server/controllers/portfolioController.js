@@ -10,11 +10,11 @@ const getPortfolio = async (req, res) => {
 };
 
 const addProject = async (req, res) => {
-  const { title, client, description, date } = req.body;
+  const { title, client, description, date, category } = req.body;
   try {
     const result = await pool.query(
-      'INSERT INTO portfolio (title, client, description, date) VALUES ($1,$2,$3,$4) RETURNING *',
-      [title, client, description, date]
+      'INSERT INTO portfolio (title, client, description, date, category) VALUES ($1,$2,$3,$4,$5) RETURNING *',
+      [title, client, description, date, category]
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {
@@ -24,11 +24,11 @@ const addProject = async (req, res) => {
 
 const updateProject = async (req, res) => {
   const { id } = req.params;
-  const { title, client, description, date } = req.body;
+  const { title, client, description, date, category } = req.body;
   try {
     const result = await pool.query(
-      'UPDATE portfolio SET title=$1, client=$2, description=$3, date=$4 WHERE id=$5 RETURNING *',
-      [title, client, description, date, id]
+      'UPDATE portfolio SET title=$1, client=$2, description=$3, date=$4, category=$5 WHERE id=$6 RETURNING *',
+      [title, client, description, date, category, id]
     );
     res.json(result.rows[0]);
   } catch (err) {

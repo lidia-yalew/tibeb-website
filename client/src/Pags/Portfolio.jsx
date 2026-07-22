@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import portfolio from "../assets/Img/portfolio.png"
+import SEO from "../Componet/SEO";
 
 const categories = [
   "Capacity Building & Training",
@@ -44,11 +46,30 @@ export default function PortfolioPage() {
   const [search, setSearch] = useState("");
   const [selectedProject, setSelectedProject] = useState(null);
 
+   const API = `${import.meta.env.VITE_API_URL}`;
+  
+  // Pagination state
+  const [visibleCount, setVisibleCount] = useState(6); // Default for desktop
+  const [isMobile, setIsMobile] = useState(false);
+  
   useEffect(() => {
-    axios.get("http://localhost:5000/api/portfolio")
+    axios.get(`${API}/portfolio`)
       .then((res) => setProjects(res.data))
       .catch(console.error)
       .finally(() => setLoading(false));
+  }, []);
+
+  // Detect screen size for responsive pagination
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 640);
+      // Reset visible count on resize
+      setVisibleCount(window.innerWidth < 640 ? 4 : 6);
+    };
+    
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const filtered = projects.filter((p) => {
@@ -57,6 +78,21 @@ export default function PortfolioPage() {
       p.client?.toLowerCase().includes(search.toLowerCase());
     return matchCat && matchSearch;
   });
+
+  // Get visible projects based on pagination
+  const visibleProjects = filtered.slice(0, visibleCount);
+  const hasMore = visibleCount < filtered.length;
+
+  // Load more handler
+  const loadMore = () => {
+    const increment = isMobile ? 4 : 6;
+    setVisibleCount(prev => Math.min(prev + increment, filtered.length));
+  };
+
+  // Show less handler
+  const showLess = () => {
+    setVisibleCount(isMobile ? 4 : 6);
+  };
 
   const stats = categories.map((cat) => ({
     name: cat,
@@ -67,32 +103,44 @@ export default function PortfolioPage() {
 
   return (
     <div className="min-h-screen bg-theme">
-      {/* ── HERO ── */}
-      <section className="relative pt-[60px] overflow-hidden">
-        <div className="relative py-16 md:py-24 px-6">
-          <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full opacity-20 animate-pulse"
-              style={{ background: "radial-gradient(circle, var(--color-secondary) 0%, transparent 70%)" }} />
-            <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full opacity-10 animate-pulse"
-              style={{ background: "radial-gradient(circle, var(--color-secondary) 0%, transparent 70%)" }} />
-          </div>
+      <SEO 
+        title="Our Portfolio"
+        description="View our successful projects and case studies in consulting, training, and organizational development."
+        keywords="portfolio, projects, case studies, consulting projects, Ethiopia"
+        url="https://www.tibeb.com/portfolio"
+      />
+      {/* ── PORTFOLIO HERO ── */}
+      <section className="relative pt-[60px] overflow-hidden min-h-[500px] md:min-h-[100px]">
+        {/* Full Background Image */}
+        <div className="absolute inset-0 z-0">
+          <img 
+            src={portfolio}
+            alt="Our Portfolio"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-black/20"></div>
+        </div>
 
-          <div className="relative z-10 max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 mb-6">
-              <span className="w-2 h-2 rounded-full bg-secondary animate-pulse" />
-              <span className="text-secondary text-xs font-semibold tracking-[2px]">OUR WORK</span>
-            </div>
-            <h1 className="text-4xl md:text-5xl font-extrabold text-primary mb-4">
-              Our <span className="text-secondary">Portfolio</span>
+        {/* Content - Small Card on Right Side */}
+        <div className="relative z-10 max-w-7xl mx-auto px-6 pt-60 md:pt-35 md:py-15 md:mt-20">
+          <div className="max-w-sm ml-auto bg-white/95 backdrop-blur-sm rounded-2xl p-4 shadow-2xl">
+            <p className="text-[#2C3E50] text-base md:text-lg mb-2 font-light">
+              <span className="text-[#D4A373]">—</span> Expert Advice.
+              <span className="text-[#D4A373]">Real Solutions.</span>
+            </p>
+            <h1 className="text-xl md:text-4xl font-bold text-[#2C3E50] mb-3 leading-tight">
+              Our <span className="text-[#D4A373]">Portfolio</span>
             </h1>
-            <p className="text-muted text-lg max-w-2xl mx-auto leading-relaxed">
+            <p className="text-[#5D6D7E] text-sm leading-relaxed mb-5">
               Explore our projects and impact across Ethiopia's vital sectors.
             </p>
+           
           </div>
         </div>
 
-        <div className="relative -mt-1">
-          <svg viewBox="0 0 1440 60" fill="none" className="w-full h-[40px]" preserveAspectRatio="none">
+        {/* Curved divider */}
+        <div className="relative z-10 -mt-1">
+          <svg viewBox="0 0 1440 60" fill="none" className="w-full h-[30px]" preserveAspectRatio="none">
             <path d="M0 30 C360 60 720 0 1080 30 C1260 45 1380 35 1440 30 L1440 60 L0 60Z" fill="var(--main-bg)" />
             <path d="M0 30 C360 60 720 0 1080 30 C1260 45 1380 35 1440 30" stroke="var(--color-secondary)" strokeWidth="2" fill="none" opacity="0.6" />
           </svg>
@@ -103,16 +151,23 @@ export default function PortfolioPage() {
       <section className="py-6 md:px-6 px-2">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-wrap gap-3 items-center">
-             <input 
+            <input 
               value={search} 
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                // Reset visible count when searching
+                setVisibleCount(isMobile ? 4 : 6);
+              }}
               placeholder="🔍 Search by name or role..."
-              className="px-4 py-2.5 rounded-xl border text-sm outline-none flex-1 min-w-[120px] bg-card text-theme border-theme focus:border-primary transition-all"
+              className="px-4 py-2.5 rounded-xl border text-sm outline-none flex-1 min-w-[120px] bg-card text-theme-light border-theme focus:border-primary transition-all"
             />
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-2 ">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
               <button 
-                onClick={() => setFilterCat("All")}
-                className="px-3  py-1.5 rounded-lg text-xs font-semibold border transition-all"
+                onClick={() => {
+                  setFilterCat("All");
+                  setVisibleCount(isMobile ? 4 : 6);
+                }}
+                className="px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all"
                 style={{
                   background: filterCat === "All" ? "var(--color-primary)" : "var(--card-bg)",
                   borderColor: filterCat === "All" ? "var(--color-primary)" : "var(--border-color)",
@@ -127,7 +182,10 @@ export default function PortfolioPage() {
                 return (
                   <button 
                     key={cat}
-                    onClick={() => setFilterCat(isActive ? "All" : cat)}
+                    onClick={() => {
+                      setFilterCat(isActive ? "All" : cat);
+                      setVisibleCount(isMobile ? 4 : 6);
+                    }}
                     className="px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all whitespace-nowrap"
                     style={{
                       background: isActive ? color : "var(--card-bg)",
@@ -160,59 +218,94 @@ export default function PortfolioPage() {
               <p className="text-muted text-sm">Try changing your search or filter.</p>
             </div>
           ) : (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filtered.map((p) => {
-                const color = categoryColor(p.category);
-                const icon = categoryIcon(p.category);
-                return (
-                  <div 
-                    key={p.id}
-                    className="group bg-card border border-theme rounded-2xl overflow-hidden hover:shadow-lg hover:-translate-y-2 transition-all duration-300 cursor-pointer card-hover"
-                    onClick={() => setSelectedProject(p)}
-                  >
-                    <div className="p-5">
-                      {/* Header */}
-                      <div className="flex items-start gap-3 mb-3">
-                        <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg flex-shrink-0 group-hover:scale-110 transition-transform duration-300"
-                          style={{ background: color + "15" }}>
-                          {icon}
+            <>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {visibleProjects.map((p) => {
+                  const color = categoryColor(p.category);
+                  const icon = categoryIcon(p.category);
+                  return (
+                    <div 
+                      key={p.id}
+                      className="group bg-card border border-theme rounded-2xl overflow-hidden hover:shadow-lg hover:-translate-y-2 transition-all duration-300 cursor-pointer card-hover"
+                      onClick={() => setSelectedProject(p)}
+                    >
+                      <div className="p-5">
+                        {/* Header */}
+                        <div className="flex items-start gap-3 mb-3">
+                          <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg flex-shrink-0 group-hover:scale-110 transition-transform duration-300"
+                            style={{ background: color + "15" }}>
+                            {icon}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-bold text-sm text-primary leading-snug line-clamp-2 group-hover:text-secondary transition-colors">
+                              {p.title}
+                            </h3>
+                            <p className="text-xs text-muted mt-0.5 line-clamp-1">{p.client}</p>
+                          </div>
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <h3 className="font-bold text-sm text-primary leading-snug line-clamp-2 group-hover:text-secondary transition-colors">
-                            {p.title}
-                          </h3>
-                          <p className="text-xs text-muted mt-0.5 line-clamp-1">{p.client}</p>
-                        </div>
-                      </div>
 
-                      {/* Category badge */}
-                      <div className="flex items-center gap-2 mb-3 flex-wrap">
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-semibold"
-                          style={{ background: color + "12", color }}>
-                          {p.category || "Uncategorized"}
-                        </span>
-                        {p.date && (
-                          <span className="text-[10px] text-muted">
-                            📅 {new Date(p.date).toLocaleDateString("en-US", { month: "short", year: "numeric" })}
+                        {/* Category badge */}
+                        <div className="flex items-center gap-2 mb-3 flex-wrap">
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-semibold"
+                            style={{ background: color + "12", color }}>
+                            {p.category || "Uncategorized"}
                           </span>
-                        )}
-                      </div>
+                          {p.date && (
+                            <span className="text-[10px] text-muted">
+                              📅 {new Date(p.date).toLocaleDateString("en-US", { month: "short", year: "numeric" })}
+                            </span>
+                          )}
+                        </div>
 
-                      {/* Description */}
-                      <p className="text-xs text-muted leading-relaxed line-clamp-3">
-                        {p.description}
-                      </p>
+                        {/* Description */}
+                        <p className="text-xs text-theme-light leading-relaxed line-clamp-3">
+                          {p.description}
+                        </p>
 
-                      {/* Read more */}
-                      <div className="mt-4 flex items-center gap-1 text-[10px] font-semibold opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:translate-x-1"
-                        style={{ color }}>
-                        Read More →
+                        {/* Read more */}
+                        <div className="mt-4 flex items-center gap-1 text-[10px] font-semibold opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:translate-x-1"
+                          style={{ color }}>
+                          Read More →
+                        </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
+                  );
+                })}
+              </div>
+
+              {/* ── SHOW MORE / SHOW LESS BUTTON ── */}
+              {filtered.length > (isMobile ? 4 : 6) && (
+                <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+                  {hasMore && (
+                    <button
+                      onClick={loadMore}
+                      className="px-8 py-3 rounded-full text-sm font-semibold text-white transition-all duration-300 hover:opacity-90 hover:scale-105 shadow-md"
+                      style={{ background: "var(--color-primary)" }}
+                    >
+                      Show More ({filtered.length - visibleCount} remaining)
+                    </button>
+                  )}
+                  
+                  {visibleCount > (isMobile ? 4 : 6) && (
+                    <button
+                      onClick={showLess}
+                      className="px-8 py-3 rounded-full text-sm font-semibold transition-all duration-300 hover:bg-gray-100 border"
+                      style={{ 
+                        color: "var(--text-primary)",
+                        borderColor: "var(--border-color)"
+                      }}
+                    >
+                      Show Less
+                    </button>
+                  )}
+
+                  {/* Counter */}
+                  <span className="text-xs text-muted">
+                    Showing {visibleProjects.length} of {filtered.length} projects
+                  </span>
+                </div>
+              )}
+            </>
           )}
         </div>
       </section>

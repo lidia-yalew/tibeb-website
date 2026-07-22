@@ -23,7 +23,7 @@
   --color-bg-light: #1A1D27;
   --color-text: #F8FAFC;
   --color-text-light: #304d76;
-  --color-card: #b7b9c4;
+  --color-card: #dadde9;
   --color-border: #334155;
   --shadow-card: 0 30px 80px rgba(0, 0, 0, 0.5);
   --shadow-glow: 0 0 30px rgba(232, 200, 76, 0.25);
@@ -94,12 +94,14 @@
   transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
 }
 
-body {
-  background: var(--color-bg);
+html,body {
   color: var(--color-text);
   font-family: system-ui, sans-serif;
   margin: 0;
+  background: var(--main-bg);
+  overscroll-behavior: none;
 }
+
 
 /* Hide scrollbar for tab navigation */
 .hide-scrollbar::-webkit-scrollbar {
