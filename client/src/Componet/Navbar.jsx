@@ -6,10 +6,11 @@ const navLinks = [
   { label: "Home", href: "/" },
   { label: "About Us", href: "/about" },
   { label: "Our Services", href: "/services" },
-  { label: "Team", href: "/team" },
   { label: "Portfolio", href: "/portfolio" },
+  { label: "Blog", href: "/blog" },
   { label: "Testimonials", href: "/testimonials" },
-  { label: "Contact", href: "/contact" }
+  { label: "Contact", href: "/contact" },
+  { label: "Admin", href: "/admin/login" }
 ];
 
 export default function Navbar() {

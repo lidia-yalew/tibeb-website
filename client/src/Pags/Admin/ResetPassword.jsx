@@ -16,7 +16,7 @@ export default function ResetPassword() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
   
-const API = `${import.meta.env.VITE_API_URL}`;
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
 
   const handleSubmit = async (e) => {
     e.preventDefault();

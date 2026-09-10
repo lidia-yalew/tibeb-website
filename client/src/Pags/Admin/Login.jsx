@@ -13,7 +13,7 @@ export default function Login() {
   const { login, token } = useAuth();
   const navigate = useNavigate();
 
- const API = `${import.meta.env.VITE_API_URL}`;
+ const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
   
   // If already logged in, redirect to dashboard
   useEffect(() => {
@@ -32,18 +32,23 @@ export default function Login() {
     setLoading(true);
     setError("");
     try {
-     const res = await axios.post(`${API}/auth/login`, form);
+      const res = await axios.post(`${API}/admin/login`, {
+        email: form.username.trim(),
+        password: form.password
+      });
       
-      // Check if login was successful
-     if (res.data.token) {
-  login(res.data.token, res.data.user);   // pass user too
-  navigate("/admin/dashboard");
-}else {
-        setError("Invalid response from server. Please try again.");
+      const token = res.data.token || res.data.access_token || res.data?.data?.access_token;
+      const user = res.data.user || res.data?.data?.user;
+      
+      if (token) {
+        login(token, user);
+        navigate("/admin/dashboard");
+      } else {
+        setError(res.data?.error?.message || "Invalid response from server. Please try again.");
       }
     } catch (err) {
-      console.error("Login error:", err);
-      setError(err.response?.data?.message || "Invalid username or password. Please try again.");
+      const errMsg = err.response?.data?.error?.message || err.response?.data?.message || "Login failed. Please check your credentials.";
+      setError(errMsg);
     } finally {
       setLoading(false);
     }
@@ -85,7 +90,7 @@ export default function Login() {
 
             {/* Username */}
             <div>
-              <label className="text-xs font-semibold text-theme-light mb-1.5 block">Username</label>
+              <label className="text-xs font-semibold text-theme-light mb-1.5 block">Email</label>
               <div className="relative">
                 <div className="absolute left-3.5 top-1/2 -translate-y-1/2">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -98,7 +103,7 @@ export default function Login() {
                   value={form.username}
                   onChange={handleChange}
                   required
-                  placeholder="Enter your username"
+                  placeholder="Enter your email"
                   autoComplete="username"
                   className="w-full pl-10 pr-4 py-3 rounded-xl border text-sm outline-none transition-all duration-200 bg-theme text-theme border-theme hover:border-primary focus:border-primary"
                 />

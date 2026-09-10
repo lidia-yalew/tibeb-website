@@ -2,39 +2,49 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import portfolio from "../assets/Img/portfolio.png"
 import SEO from "../Componet/SEO";
+import test from "../assets/Img/test.png"
 
 const categories = [
-  "Capacity Building & Training",
-  "Data Analytics & Research",
-  "Monitoring, Evaluation & Learning",
+  "Capacity Development and Training",
+  "Data Analysis and Digital Transformation",
+  "Monitoring, Evaluation and Research",
   "Institutional Development",
-  "Human Resource & Recruitment",
-  "Conference & Event Support",
-  "Education & Digital Transformation",
+  "Human Resource Management",
+  "Business Development and Strategy",
+  "Education and Digital Transformation",
+  "Event Management",
+  "Professional Training Services",
+  "General"
 ];
 
 const categoryColor = (cat) => {
   const map = {
-    "Capacity Building & Training": "var(--color-primary)",
-    "Data Analytics & Research": "var(--color-secondary)",
-    "Monitoring, Evaluation & Learning": "var(--color-primary)",
+    "Capacity Development and Training": "var(--color-primary)",
+    "Data Analysis and Digital Transformation": "var(--color-secondary)",
+    "Monitoring, Evaluation and Research": "var(--color-primary)",
     "Institutional Development": "var(--color-secondary)",
-    "Human Resource & Recruitment": "var(--color-primary)",
-    "Conference & Event Support": "var(--color-secondary)",
-    "Education & Digital Transformation": "var(--color-primary)",
+    "Human Resource Management": "var(--color-primary)",
+    "Business Development and Strategy": "var(--color-secondary)",
+    "Education and Digital Transformation": "var(--color-primary)",
+    "Event Management": "var(--color-secondary)",
+    "Professional Training Services": "var(--color-primary)",
+    "General": "var(--color-secondary)"
   };
   return map[cat] || "var(--color-primary)";
 };
 
 const categoryIcon = (cat) => {
   const map = {
-    "Capacity Building & Training": "🎓",
-    "Data Analytics & Research": "📊",
-    "Monitoring, Evaluation & Learning": "📈",
+    "Capacity Development and Training": "🎓",
+    "Data Analysis and Digital Transformation": "📊",
+    "Monitoring, Evaluation and Research": "📈",
     "Institutional Development": "🏛️",
-    "Human Resource & Recruitment": "👥",
-    "Conference & Event Support": "🏆",
-    "Education & Digital Transformation": "💻",
+    "Human Resource Management": "👥",
+    "Business Development and Strategy": "💼",
+    "Education and Digital Transformation": "💻",
+    "Event Management": "🏆",
+    "Professional Training Services": "🏅",
+    "General": "📋"
   };
   return map[cat] || "📋";
 };
@@ -46,7 +56,7 @@ export default function PortfolioPage() {
   const [search, setSearch] = useState("");
   const [selectedProject, setSelectedProject] = useState(null);
 
-   const API = `${import.meta.env.VITE_API_URL}`;
+   const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
   
   // Pagination state
   const [visibleCount, setVisibleCount] = useState(6); // Default for desktop
@@ -102,15 +112,16 @@ export default function PortfolioPage() {
   }));
 
   return (
-    <div className="min-h-screen bg-theme">
+    <>
       <SEO 
         title="Our Portfolio"
         description="View our successful projects and case studies in consulting, training, and organizational development."
         keywords="portfolio, projects, case studies, consulting projects, Ethiopia"
         url="https://www.tibeb.com/portfolio"
       />
+      <div className="min-h-screen bg-theme">
       {/* ── PORTFOLIO HERO ── */}
-      <section className="relative pt-[60px] overflow-hidden min-h-[500px] md:min-h-[100px]">
+      <section className="relative pt-19 md:pt-25 overflow-hidden min-h-150 md:min-h-150 py-16">
         {/* Full Background Image */}
         <div className="absolute inset-0 z-0">
           <img 
@@ -122,7 +133,7 @@ export default function PortfolioPage() {
         </div>
 
         {/* Content - Small Card on Right Side */}
-        <div className="relative z-10 max-w-7xl mx-auto px-6 pt-60 md:pt-35 md:py-15 md:mt-20">
+        <div className="relative z-10 max-w-7xl mx-auto px-6 pt-60 md:pt-35 md:py-6 md:mt-20">
           <div className="max-w-sm ml-auto bg-white/95 backdrop-blur-sm rounded-2xl p-4 shadow-2xl">
             <p className="text-[#2C3E50] text-base md:text-lg mb-2 font-light">
               <span className="text-[#D4A373]">—</span> Expert Advice.
@@ -149,7 +160,7 @@ export default function PortfolioPage() {
 
       {/* ── FILTERS ── */}
       <section className="py-6 md:px-6 px-2">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           <div className="flex flex-wrap gap-3 items-center">
             <input 
               value={search} 
@@ -176,7 +187,7 @@ export default function PortfolioPage() {
               >
                 All
               </button>
-              {categories.slice(0, 5).map((cat) => {
+              {categories.slice(0, 10).map((cat) => {
                 const isActive = filterCat === cat;
                 const color = categoryColor(cat);
                 return (
@@ -204,7 +215,7 @@ export default function PortfolioPage() {
 
       {/* ── PROJECTS GRID ── */}
       <section className="py-8 px-6 bg-theme">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           {loading ? (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {[1,2,3,4,5,6].map(i => (
@@ -388,6 +399,7 @@ export default function PortfolioPage() {
           box-shadow: var(--shadow-lg);
         }
       `}</style>
-    </div>
+      </div>
+    </>
   );
 }

@@ -1,0 +1,27 @@
+package hasher
+
+import (
+	"crypto/sha256"
+	"encoding/hex"
+
+	"golang.org/x/crypto/bcrypt"
+)
+
+func HashPassword(password string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 12)
+	if err != nil {
+		return "", err
+	}
+	return string(bytes), nil
+}
+
+
+func CheckPassword(password string, hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
+}
+
+func HashToken(token string) string{
+	hash := sha256.Sum256([]byte(token))
+	return hex.EncodeToString(hash[:])
+}

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import img1 from "../assets/Img/tbimg1.png"
 import logo from "../assets/Img/logo.png"
+import ChatWidget from '../Componet/ChatWidget';
 
 
 const stats = [
@@ -62,25 +63,23 @@ export default function Hero() {
             </p>
 
             {/* CTA Buttons */}
-            <div className="flex flex-wrap  gap-1 md:gap-2 text-[12px] md:text-[16]">
+            <div className="flex flex-wrap gap-3 mt-6 text-[12px] md:text-sm">
               <Link
                 to="/services"
-                className="bg-card text-theme-light px-2 py-3.5 rounded-lg  font-semibold flex items-center gap-2 shadow-glow hover:bg-secondary hover:text-primary hover:-translate-y-0.5 transition-all duration-250 border-secondary border-2"
+                className="bg-card text-theme-light px-5 py-3.5 rounded-xl font-bold flex items-center gap-2 shadow-glow hover:bg-secondary hover:text-white hover:-translate-y-1 transition-all duration-300 border-secondary border-2"
               >
-                Explore Our Services
+                Explore Our Services 
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path d="M3 8h10M9 4l4 4-4 4" stroke="#1A237E" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </Link>
-              <Link
-                to="about"
-                className="bg-transparent text-secondary px-4 md:px-7 py-3.5 rounded-lg font-semibold border-2 border-primary flex items-center gap-2 hover:bg-primary hover:text-white hover:-translate-y-0.5 transition-all duration-250"
+            
+              <button
+                onClick={() => window.dispatchEvent(new Event('open-tibeb-ai'))}
+                className="bg-gradient-to-r from-primary to-secondary text-theme-light px-6 py-3.5 rounded-xl font-bold flex items-center gap-2 shadow-xl shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-1 transition-all duration-300 border border-white/10"
               >
-                Learn More About Us
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </Link>
+                <span className="text-lg">🤖</span> Ask Tibeb AI
+              </button>
             </div>
           </div>
 
@@ -101,6 +100,7 @@ export default function Hero() {
                   if (fallback) fallback.style.display = "flex";
                 }}
               />
+              
                 <div className="absolute inset-y-0 left-0 w-1/2 bg-gradient-to-r from-white/90 to-transparent pointer-events-none" />
               {/* Fallback */}
               <div className="hidden h-[400px] bg-gradient-to-br from-primary via-[#283593] to-primary items-center justify-center flex-col gap-4 text-white">
@@ -122,7 +122,7 @@ export default function Hero() {
               {/* Logo badge */}
               <div className="absolute bottom-4 left-4 bg-white/95 rounded-xl px-4 py-2.5 flex items-center gap-2.5 shadow-[0_4px_20px_rgba(0,0,0,0.15)] backdrop-blur-sm">
                 <div className="w-9 h-9 rounded-full border-2 border-secondary flex items-center justify-center bg-white">
-                  <img src={logo} alt="" />
+                  <img src={logo} alt="" />  
                 </div>
                 <div>
                   <div className="font-extrabold text-[13px] text-primary">Tibeb</div>
@@ -194,7 +194,8 @@ export default function Hero() {
       opacity="0.4"
     />
   </svg>
-</div>
+      </div>
+      <ChatWidget />
     </section>
   );
 }

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import Navbar from "../Componet/Navbar";
 import logo from "../assets/Img/logo.png"
-import img1 from "../assets/Img/tbimg1.png"
+import all from "../assets/Img/all.png"
 import { Link } from "react-router-dom";
 import SEO from "../Componet/SEO";
 
@@ -56,7 +56,7 @@ export default function About() {
             {/* Left — Image */}
             <div className="relative rounded-2xl overflow-hidden shadow-card ring-1 ring-[rgba(201,168,76,0.2)]">
               <img
-                src={img1}
+                src={all}
                 alt="Tibeb consulting team at work"
                 className="w-full md:h-[330px] object-cover"
                 onError={(e) => {

@@ -4,7 +4,7 @@ import axios from "axios";
 import { useAuth } from "../../Context/AuthContext";
 
 // ✅ ADDED: API variable with environment variable
-const API = `${import.meta.env.VITE_API_URL}`;
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
 
 export default function AddAdmin() {
   const { token, user } = useAuth();
@@ -33,8 +33,14 @@ export default function AddAdmin() {
     setListError("");
     try {
       // ✅ FIXED: Using correct API endpoint
-      const res = await axios.get(`${API}/admins`, authHeaders);
-      setAdmins(res.data.admins || []);
+      const res = await axios.get(`${API}/admin/admins`, authHeaders);
+      const mappedAdmins = (res.data.admins || []).map(a => ({
+          ...a,
+          name: `${a.first_name} ${a.last_name}`,
+          username: a.email.split('@')[0],
+          is_active: a.status === 'ACTIVE'
+      }));
+      setAdmins(mappedAdmins);
     } catch (err) {
       setListError(err.response?.data?.message || "Failed to load admins.");
     } finally {
@@ -60,8 +66,16 @@ export default function AddAdmin() {
     setFormSuccess("");
 
     try {
-      // ✅ FIXED: Using correct API endpoint
-      await axios.post(`${API}/auth/admins`, form, authHeaders);
+      const parts = form.name.split(" ");
+      const payload = {
+          first_name: parts[0] || form.name,
+          last_name: parts.slice(1).join(" ") || " ",
+          email: form.email,
+          password: form.password,
+          role: form.role
+      };
+      // ✅ FIXED: Using correct API endpoint and payload
+      await axios.post(`${API}/admin/admins`, payload, authHeaders);
       setFormSuccess(`Admin "${form.username}" created successfully.`);
       setForm({ name: "", email: "", username: "", password: "", role: "Admin" });
       fetchAdmins();
@@ -75,10 +89,10 @@ export default function AddAdmin() {
   const handleToggleStatus = async (admin) => {
     setStatusUpdatingId(admin.id);
     try {
-      // ✅ FIXED: Using correct API endpoint
-      await axios.patch(
-        `${API}/admins/${admin.id}/status`,
-        { is_active: !admin.is_active },
+      // ✅ FIXED: Using PUT with status string
+      await axios.put(
+        `${API}/admin/admins/${admin.id}/status`,
+        { status: admin.is_active ? "INACTIVE" : "ACTIVE" },
         authHeaders
       );
       fetchAdmins();

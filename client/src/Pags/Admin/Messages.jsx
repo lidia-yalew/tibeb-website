@@ -1,323 +1,330 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useOutletContext } from 'react-router-dom';
 
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
 
-const token = () => localStorage.getItem("token");
-const headers = () => ({ Authorization: `Bearer ${token()}` });
-
-
+const statusFilters = [
+  { id: "all", label: "All Messages" },
+  { id: "unread", label: "Unread" },
+  { id: "read", label: "Read" },
+];
 
 export default function Messages() {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selected, setSelected] = useState(null);
-  const [filter, setFilter] = useState("all"); // all | unread | read
   const [search, setSearch] = useState("");
-  const [toast, setToast] = useState(null);
- const API = `${import.meta.env.VITE_API_URL}/contact`;
+  const [activeFilter, setActiveFilter] = useState("all");
+  const [selectedMsg, setSelectedMsg] = useState(null);
 
-  const context = useOutletContext();
-  const refetchUnread = context?.refetchUnread || (() => {});
-
-  const showToast = (msg, type = "success") => {
-    setToast({ msg, type });
-    setTimeout(() => setToast(null), 3000);
-  };
-
-  const fetchMessages = async () => {
-    try {
-      const res = await axios.get(API, { headers: headers() });
-      setMessages(res.data);
-    } catch { showToast("Failed to load messages", "error"); }
-    finally { setLoading(false); }
+  const fetchMessages = () => {
+    const token = localStorage.getItem("token");
+    axios.get(`${API}/admin/contacts`, { headers: { Authorization: `Bearer ${token}` } })
+      .then(res => {
+        const list = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+        setMessages(list);
+        if (list.length > 0 && !selectedMsg) {
+          setSelectedMsg(list[0]);
+        }
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false));
   };
 
   useEffect(() => { fetchMessages(); }, []);
 
-  const handleMarkRead = async (msg) => {
-    if (msg.is_read) return;
+  const handleUpdateStatus = async (id, newStatus) => {
+    const token = localStorage.getItem("token");
     try {
-      await axios.put(`${API}/${msg.id}`, {}, { headers: headers() });
-      setMessages((prev) => prev.map((m) => m.id === msg.id ? { ...m, is_read: true } : m));
-      if (selected?.id === msg.id) setSelected({ ...msg, is_read: true });
-      showToast("Marked as read");
-      refetchUnread();
-    } catch { showToast("Failed to update", "error"); }
+      await axios.put(`${API}/admin/contacts/${id}/status`, { status: newStatus }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setMessages(prev => prev.map(m => m.id === id ? { ...m, status: newStatus } : m));
+      if (selectedMsg?.id === id) {
+        setSelectedMsg(prev => ({ ...prev, status: newStatus }));
+      }
+    } catch (err) {
+      console.error("Failed to update status:", err);
+    }
   };
 
-  const handleSelect = (msg) => {
-    setSelected(msg);
-    handleMarkRead(msg);
-  };
-
-  const handleDelete = async (msg, e) => {
-    if (e) e.stopPropagation();
-    if (!window.confirm(`Delete message from ${msg.name}? This cannot be undone.`)) return;
+  const handleDelete = async (id) => {
+    if (!confirm("Are you sure you want to delete this message?")) return;
+    const token = localStorage.getItem("token");
     try {
-      await axios.delete(`${API}/${msg.id}`, { headers: headers() });
-      setMessages((prev) => prev.filter((m) => m.id !== msg.id));
-      if (selected?.id === msg.id) setSelected(null);
-      showToast("Message deleted");
-      refetchUnread();
-    } catch { showToast("Failed to delete message", "error"); }
+      await axios.delete(`${API}/admin/contacts/${id}`, { headers: { Authorization: `Bearer ${token}` } });
+      const remaining = messages.filter(m => m.id !== id);
+      setMessages(remaining);
+      if (selectedMsg?.id === id) {
+        setSelectedMsg(remaining[0] || null);
+      }
+    } catch (err) {
+      alert("Failed to delete message.");
+    }
   };
 
-  const filtered = messages.filter((m) => {
-    const matchFilter = filter === "all" ? true : filter === "unread" ? !m.is_read : m.is_read;
-    const matchSearch = m.name?.toLowerCase().includes(search.toLowerCase()) ||
-      m.email?.toLowerCase().includes(search.toLowerCase()) ||
-      m.phone?.toLowerCase().includes(search.toLowerCase()) ||
-      m.message?.toLowerCase().includes(search.toLowerCase());
-    return matchFilter && matchSearch;
+  const filteredMessages = messages.filter(m => {
+    const status = (m.status || "unread").toLowerCase();
+    const matchesFilter = activeFilter === "all" || status === activeFilter;
+    const matchesSearch = !search.trim() ||
+      (m.name && m.name.toLowerCase().includes(search.toLowerCase())) ||
+      (m.email && m.email.toLowerCase().includes(search.toLowerCase())) ||
+      (m.phone && m.phone.toLowerCase().includes(search.toLowerCase())) ||
+      (m.subject && m.subject.toLowerCase().includes(search.toLowerCase())) ||
+      (m.message && m.message.toLowerCase().includes(search.toLowerCase()));
+    return matchesFilter && matchesSearch;
   });
 
-  const unreadCount = messages.filter((m) => !m.is_read).length;
+  const unreadCount = messages.filter(m => (m.status || 'unread').toLowerCase() === 'unread').length;
+  const readCount = messages.filter(m => (m.status || '').toLowerCase() === 'read').length;
 
-  // Parse client type from message if stored
-  const parseType = (msg) => {
-    if (msg?.includes("[Client")) return { label: "Client / NGO", color: "#1A237E", icon: "🏢" };
-    if (msg?.includes("[Partner")) return { label: "Partner / Donor", color: "#C9A84C", icon: "🤝" };
-    if (msg?.includes("[Job")) return { label: "Job Seeker", color: "#1A237E", icon: "👤" };
-    return { label: "General", color: "#6B7280", icon: "📬" };
-  };
-
-  const initials = (name) => name?.split(" ").map(w => w[0]).slice(0, 2).join("") || "?";
-
-  const formatDate = (date) => {
-    const d = new Date(date);
-    const now = new Date();
-    const diff = Math.floor((now - d) / 1000);
-    if (diff < 60) return "just now";
-    if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-    if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-    return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  const getAvatarGradient = (name = "") => {
+    const gradients = [
+      "from-blue-600 to-indigo-700",
+      "from-emerald-500 to-teal-700",
+      "from-purple-600 to-indigo-800",
+      "from-amber-500 to-orange-600",
+      "from-rose-500 to-pink-700"
+    ];
+    const charCode = name.charCodeAt(0) || 0;
+    return gradients[charCode % gradients.length];
   };
 
   return (
-    <div className="max-w-6xl space-y-5">
-
-      {/* Toast */}
-      {toast && (
-        <div className="fixed top-6 right-6 z-50 px-5 py-3 rounded-xl shadow-lg text-white text-sm font-semibold"
-          style={{ background: toast.type === "error" ? "#DC2626" : "#0F6E56" }}>
-          {toast.type === "error" ? "❌" : "✅"} {toast.msg}
-        </div>
-      )}
-
-      {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4">
+    <div className="space-y-6">
+      {/* Top Header & Analytics */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-extrabold text-primary">Messages</h2>
-          <p className="text-theme-light text-sm mt-0.5">
-            {messages.length} total · {" "}
-            <span style={{ color: unreadCount > 0 ? "#DC2626" : "var(--color-text-light)" }}>
-              {unreadCount} unread
-            </span>
-          </p>
-        </div>
-
-        {/* Stats */}
-        <div className="flex gap-3">
-          {[
-            { label: "Total", val: messages.length, color: "#1A237E" },
-            { label: "Unread", val: unreadCount, color: "#DC2626" },
-            { label: "Read", val: messages.length - unreadCount, color: "#0F6E56" },
-          ].map((s, i) => (
-            <div key={i} className="bg-card border border-theme rounded-xl px-4 py-2 text-center min-w-[64px]">
-              <div className="text-lg font-extrabold" style={{ color: s.color }}>{s.val}</div>
-              <div className="text-[10px] text-theme-light">{s.label}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Filters & search */}
-      <div className="flex flex-wrap gap-3 items-center">
-        <input value={search} onChange={(e) => setSearch(e.target.value)}
-          placeholder="🔍 Search by name, email, phone or message..."
-          className="px-4 py-2 rounded-xl border text-sm outline-none flex-1 min-w-[200px]"
-          style={{ background: "var(--color-card)", borderColor: "var(--color-border)", color: "var(--color-text)" }} />
-
-        <div className="flex gap-2">
-          {["all", "unread", "read"].map((f) => (
-            <button key={f} onClick={() => setFilter(f)}
-              className="px-4 py-2 rounded-xl text-xs font-semibold border transition-all capitalize"
-              style={{
-                background: filter === f ? "var(--color-primary)" : "var(--color-card)",
-                borderColor: filter === f ? "var(--color-primary)" : "var(--color-border)",
-                color: filter === f ? "#fff" : "var(--color-text)",
-              }}>
-              {f === "all" ? `All (${messages.length})` : f === "unread" ? `Unread (${unreadCount})` : `Read (${messages.length - unreadCount})`}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Main panel — list + detail */}
-      <div className="grid lg:grid-cols-5 gap-4" style={{ minHeight: "500px" }}>
-
-        {/* Message list */}
-        <div className="lg:col-span-2 bg-card border border-theme rounded-2xl overflow-hidden">
-          <div className="px-4 py-3 border-b border-theme">
-            <div className="text-xs font-bold tracking-[2px] text-secondary">INBOX</div>
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-extrabold text-primary">Inquiries & Messages</h1>
+            {unreadCount > 0 && (
+              <span className="bg-amber-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full animate-pulse">
+                {unreadCount} Unread
+              </span>
+            )}
           </div>
-
-          {loading ? (
-            <div className="p-4 space-y-3">
-              {[1,2,3,4].map(i => (
-                <div key={i} className="h-16 rounded-xl animate-pulse" style={{ background: "var(--color-border)" }} />
-              ))}
-            </div>
-          ) : filtered.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-64 text-center px-4">
-              <div className="text-4xl mb-3">📭</div>
-              <div className="font-bold text-primary text-sm mb-1">No messages</div>
-              <p className="text-theme-light text-xs">
-                {messages.length === 0 ? "No messages received yet. Share the contact page!" : "No messages match your filter."}
-              </p>
-            </div>
-          ) : (
-            <div className="divide-y overflow-y-auto" style={{ borderColor: "var(--color-border)", maxHeight: "600px" }}>
-              {filtered.map((m) => {
-                const type = parseType(m.message);
-                const isSelected = selected?.id === m.id;
-                return (
-                  <div key={m.id} onClick={() => handleSelect(m)}
-                    className="flex items-start gap-3 p-4 cursor-pointer transition-all hover:bg-[var(--color-bg-light)] group"
-                    style={{
-                      background: isSelected ? "var(--color-primary)08" : "transparent",
-                      borderLeft: isSelected ? "3px solid var(--color-primary)" : "3px solid transparent",
-                    }}>
-
-                    {/* Avatar */}
-                    <div className="relative flex-shrink-0">
-                      <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white text-sm font-bold"
-                        style={{ background: type.color }}>
-                        {initials(m.name)}
-                      </div>
-                      {!m.is_read && (
-                        <div className="absolute -top-1 -right-1 w-3 h-3 rounded-full border-2 border-card"
-                          style={{ background: "#DC2626" }} />
-                      )}
-                    </div>
-
-                    {/* Info */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-1">
-                        <span className={`text-sm truncate ${!m.is_read ? "font-bold text-primary" : "font-medium text-theme-light"}`}>
-                          {m.name}
-                        </span>
-                        <span className="text-[10px] text-theme-light flex-shrink-0">{formatDate(m.created_at)}</span>
-                      </div>
-                      <div className="text-xs text-theme-light truncate">{m.email}</div>
-                      {m.phone && (
-                        <div className="text-xs text-theme-light truncate flex items-center gap-1 mt-0.5">
-                          <span>📞</span>{m.phone}
-                        </div>
-                      )}
-                      <div className="text-xs text-theme-light truncate mt-0.5 line-clamp-1">{m.message}</div>
-                    </div>
-
-                    {/* Delete button */}
-                    <button
-                      onClick={(e) => handleDelete(m, e)}
-                      className="flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center transition-all hover:bg-red-50"
-                      style={{ color: "#DC2626" }}
-                      title="Delete message"
-                    >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                        <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14ZM10 11v6M14 11v6"
-                          stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
-          )}
+          <p className="text-xs text-theme-light mt-1">Manage client messages and business inquiries from your website.</p>
         </div>
 
-        {/* Message detail */}
-        <div className="lg:col-span-3 bg-card border border-theme rounded-2xl overflow-hidden">
-          {!selected ? (
-            <div className="flex flex-col items-center justify-center h-full min-h-[400px] text-center px-6">
-              <div className="text-5xl mb-4">📬</div>
-              <div className="font-bold text-primary mb-1">Select a message</div>
-              <p className="text-theme-light text-sm">Click any message on the left to read it here</p>
-            </div>
-          ) : (
-            <div className="flex flex-col h-full">
+        {/* Stats Summary Pills */}
+        <div className="flex gap-2">
+          <div className="bg-card border rounded-xl px-3 py-1.5 text-center shadow-sm">
+            <div className="text-xs font-extrabold text-primary">{messages.length}</div>
+            <div className="text-[9px] text-theme-light uppercase font-bold">Total</div>
+          </div>
+          <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl px-3 py-1.5 text-center shadow-sm">
+            <div className="text-xs font-extrabold text-amber-600">{unreadCount}</div>
+            <div className="text-[9px] text-amber-600 uppercase font-bold">Unread</div>
+          </div>
+          <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-3 py-1.5 text-center shadow-sm">
+            <div className="text-xs font-extrabold text-emerald-600">{readCount}</div>
+            <div className="text-[9px] text-emerald-600 uppercase font-bold">Read</div>
+          </div>
+        </div>
+      </div>
 
-              {/* Detail header */}
-              <div className="px-6 py-4 border-b border-theme">
-                <div className="flex items-start gap-4">
+      {/* Controls Bar: Search & Status Filter Tabs */}
+      <div className="flex flex-col md:flex-row gap-3 justify-between items-stretch md:items-center bg-card p-3 rounded-2xl border shadow-sm">
+        {/* Search Input */}
+        <div className="relative flex-1 max-w-md">
+          <input
+            type="text"
+            placeholder="Search by sender, email, phone, subject..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className="w-full pl-9 pr-4 py-2 rounded-xl border text-xs outline-none bg-theme/30 text-primary focus:border-primary transition-all"
+          />
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-theme-light">🔍</span>
+        </div>
+
+        {/* Filter Tabs */}
+        <div className="flex gap-1 overflow-x-auto pb-1 md:pb-0">
+          {statusFilters.map(f => {
+            const count = f.id === 'all' ? messages.length :
+                          f.id === 'unread' ? unreadCount : readCount;
+            const isActive = activeFilter === f.id;
+            return (
+              <button
+                key={f.id}
+                onClick={() => setActiveFilter(f.id)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap ${
+                  isActive 
+                    ? 'bg-primary text-white shadow-sm' 
+                    : 'bg-theme/40 text-theme-light hover:bg-theme/70'
+                }`}
+              >
+                {f.label}
+                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
+                  isActive ? 'bg-white/20 text-white' : 'bg-card border text-theme-light'
+                }`}>
+                  {count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Main Inbox View: Split Master-Detail Layout */}
+      {loading ? (
+        <div className="text-center py-16 text-xs text-theme-light animate-pulse">Loading inbox messages...</div>
+      ) : filteredMessages.length === 0 ? (
+        <div className="text-center py-16 bg-card border rounded-2xl text-xs text-theme-light space-y-2">
+          <div className="text-3xl">📥</div>
+          <div className="font-bold text-primary">No messages found</div>
+          <p className="text-[11px] text-theme-light max-w-sm mx-auto">There are no client inquiries matching your search filter.</p>
+        </div>
+      ) : (
+        <div className="grid lg:grid-cols-12 gap-6 items-start">
+          
+          {/* LEFT COLUMN: Message Cards List */}
+          <div className="lg:col-span-5 space-y-3 max-h-[750px] overflow-y-auto pr-1">
+            {filteredMessages.map(m => {
+              const isSelected = selectedMsg?.id === m.id;
+              const status = (m.status || 'unread').toLowerCase();
+              const isUnread = status === 'unread';
+
+              return (
+                <div
+                  key={m.id}
+                  onClick={() => {
+                    if (isUnread) {
+                      const updatedMsg = { ...m, status: 'read' };
+                      setSelectedMsg(updatedMsg);
+                      handleUpdateStatus(m.id, 'read');
+                    } else {
+                      setSelectedMsg(m);
+                    }
+                  }}
+                  className={`p-4 rounded-2xl border transition-all cursor-pointer relative flex gap-3.5 items-start ${
+                    isSelected 
+                      ? 'bg-card border-primary ring-2 ring-primary/20 shadow-md' 
+                      : isUnread 
+                      ? 'bg-amber-500/5 border-amber-500/30 hover:border-amber-500/60' 
+                      : 'bg-card border-theme hover:border-primary/40'
+                  }`}
+                >
                   {/* Avatar */}
-                  <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold flex-shrink-0"
-                    style={{ background: parseType(selected.message).color }}>
-                    {initials(selected.name)}
+                  <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${getAvatarGradient(m.name)} text-white font-extrabold text-sm flex items-center justify-center flex-shrink-0 shadow-sm`}>
+                    {(m.name || "C")[0].toUpperCase()}
                   </div>
+
+                  {/* Message Summary */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="font-extrabold text-primary">{selected.name}</h3>
-                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
-                        style={{
-                          background: parseType(selected.message).color + "15",
-                          color: parseType(selected.message).color
-                        }}>
-                        {parseType(selected.message).icon} {parseType(selected.message).label}
+                    <div className="flex justify-between items-baseline gap-2">
+                      <h4 className={`text-xs truncate ${isUnread ? 'font-black text-primary' : 'font-bold text-primary/90'}`}>
+                        {m.name}
+                      </h4>
+                      <span className="text-[10px] text-theme-light flex-shrink-0">
+                        {new Date(m.created_at || m.submitted_at || Date.now()).toLocaleDateString([], { month: 'short', day: 'numeric' })}
                       </span>
-                      {selected.is_read ? (
-                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
-                          style={{ background: "#0F6E5615", color: "#0F6E56" }}>✓ Read</span>
-                      ) : (
-                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
-                          style={{ background: "#DC262615", color: "#DC2626" }}>● New</span>
-                      )}
                     </div>
-                    <div className="text-sm text-theme-light mt-0.5">{selected.email}</div>
-                    {selected.phone && (
-                      <div className="text-sm text-theme-light mt-0.5 flex items-center gap-1.5">
-                        <span>📞</span>
-                        <a
-                          href={`tel:${selected.phone}`}
-                          className="font-medium hover:underline"
-                          style={{ color: "var(--color-primary)" }}
-                        >
-                          {selected.phone}
-                        </a>
+
+                    {m.organization && (
+                      <div className="text-[10px] font-semibold text-blue-600 truncate mt-0.5">
+                        🏢 {m.organization}
                       </div>
                     )}
-                    <div className="text-xs text-theme-light mt-0.5">
-                      {new Date(selected.created_at).toLocaleDateString("en-US", {
-                        weekday: "long", year: "numeric", month: "long", day: "numeric",
-                        hour: "2-digit", minute: "2-digit"
-                      })}
+
+                    <div className="text-[11px] font-medium text-primary mt-1 truncate">
+                      {m.subject || "No Subject"}
+                    </div>
+
+                    <p className="text-[11px] text-theme-light mt-0.5 line-clamp-2 leading-relaxed">
+                      {m.message}
+                    </p>
+
+                    {/* Status Pill */}
+                    <div className="mt-2 flex items-center justify-between">
+                      <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
+                        status === 'unread' ? 'bg-amber-500/15 text-amber-700 border border-amber-500/30' :
+                        'bg-emerald-500/15 text-emerald-700 border border-emerald-500/30'
+                      }`}>
+                        {status}
+                      </span>
+                      {isUnread && <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping"></span>}
                     </div>
                   </div>
                 </div>
-              </div>
+              );
+            })}
+          </div>
 
-              {/* Message body */}
-              <div className="flex-1 px-6 py-5 overflow-y-auto">
-                <div className="text-xs font-bold tracking-[2px] text-secondary mb-3">MESSAGE</div>
-                <div className="bg-[var(--color-bg)] rounded-2xl p-5 border border-theme">
-                  <p className="text-sm text-primary leading-relaxed whitespace-pre-wrap">{selected.message}</p>
+          {/* RIGHT COLUMN: Active Message Detail Viewer */}
+          <div className="lg:col-span-7 bg-card border rounded-2xl p-6 shadow-md sticky top-6 space-y-6">
+            {selectedMsg ? (
+              <>
+                {/* Sender Header Card */}
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b">
+                  <div className="flex items-center gap-3.5">
+                    <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${getAvatarGradient(selectedMsg.name)} text-white font-black text-lg flex items-center justify-center shadow-md`}>
+                      {(selectedMsg.name || "C")[0].toUpperCase()}
+                    </div>
+                    <div>
+                      <h2 className="text-base font-extrabold text-primary">{selectedMsg.name}</h2>
+                      <div className="text-xs text-theme-light flex flex-wrap items-center gap-2 mt-0.5">
+                        <span>📧 {selectedMsg.email}</span>
+                        {selectedMsg.phone && <span>• 📞 {selectedMsg.phone}</span>}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex items-center gap-2">
+                    <span className={`text-[10px] font-bold px-2 py-1 rounded-lg uppercase tracking-wider ${
+                        (selectedMsg.status || 'unread').toLowerCase() === 'unread' 
+                          ? 'bg-amber-500/10 text-amber-600' 
+                          : 'bg-emerald-500/10 text-emerald-600'
+                      }`}>
+                      {(selectedMsg.status || 'unread').toUpperCase()}
+                    </span>
+
+                    <button
+                      onClick={() => handleDelete(selectedMsg.id)}
+                      className="p-1.5 px-3 text-xs text-red-600 hover:bg-red-50 rounded-xl transition-all font-bold border border-red-200"
+                      title="Delete Message"
+                    >
+                      🗑️ Delete
+                    </button>
+                  </div>
                 </div>
-              </div>
 
-              {/* Reply actions */}
-              <div className="px-6 py-4 border-t border-theme">
-                <button onClick={() => handleDelete(selected)}
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold border transition-all hover:opacity-90 ml-auto"
-                    style={{ borderColor: "#DC2626", color: "#DC2626" }}>
-                    🗑️ Delete Message
-                  </button>
+                {/* Metadata Chips */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-theme/30 p-3.5 rounded-xl border text-xs">
+                  <div>
+                    <span className="text-[10px] text-theme-light block font-semibold uppercase">Organization</span>
+                    <span className="font-bold text-primary">{selectedMsg.organization || "-"}</span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-theme-light block font-semibold uppercase">Date & Time</span>
+                    <span className="font-bold text-primary">
+                      {new Date(selectedMsg.created_at || selectedMsg.submitted_at || Date.now()).toLocaleString()}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-theme-light block font-semibold uppercase">Subject</span>
+                    <span className="font-bold text-primary truncate block">{selectedMsg.subject || "-"}</span>
+                  </div>
+                </div>
+
+                {/* Full Message Body */}
+                <div className="space-y-2">
+                  <h3 className="text-xs font-extrabold text-theme-light uppercase tracking-wider">Message Content</h3>
+                  <div className="bg-theme/20 border p-5 rounded-2xl text-xs text-primary leading-relaxed whitespace-pre-wrap font-normal shadow-inner min-h-[160px]">
+                    {selectedMsg.message}
+                  </div>
+                </div>
+
+        
+              </>
+            ) : (
+              <div className="text-center py-20 text-xs text-theme-light">
+                Select a message from the left list to read details.
               </div>
-            </div>
-          )}
+            )}
+          </div>
+
         </div>
-      </div>
+      )}
     </div>
   );
 }

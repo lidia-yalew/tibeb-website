@@ -13,7 +13,7 @@ export default function ChangePassword() {
     confirm: false,
   });
 
-   const API = `${import.meta.env.VITE_API_URL}`
+   const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
 
   const [form, setForm] = useState({
     currentPassword: "",
@@ -51,10 +51,10 @@ export default function ChangePassword() {
     setLoading(true);
     try {
       const res = await axios.put(
-        `${API}/auth/change-password`,
+        `${API}/admin/me/password`,
         {
-          currentPassword: form.currentPassword,
-          newPassword: form.newPassword,
+          old_password: form.currentPassword,
+          new_password: form.newPassword,
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );

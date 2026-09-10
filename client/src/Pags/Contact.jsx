@@ -93,7 +93,7 @@ export default function Contact() {
   window.scrollTo(0, 0);
 }, []);
 
-const API = `${import.meta.env.VITE_API_URL}`;
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
 
   const activeType = clientTypes.find((t) => t.id === selectedType);
 
@@ -119,14 +119,16 @@ const API = `${import.meta.env.VITE_API_URL}`;
     e.preventDefault();
     setStatus("loading");
     try {
-      await axios.post(`${API}/contact`, {
-  name: form.name,
-  email: form.email,
-  phone: form.phone,
-  message: `[${activeType.label}] | Org: ${form.organization} | Subject: ${form.subject}\n\n${form.message}`,
-});
+      await axios.post(`${API}/contacts`, {
+        name: form.name,
+        email: form.email,
+        phone: form.phone,
+        organization: form.organization,
+        subject: `[${activeType.label}] ${form.subject}`,
+        message: form.message,
+      });
       setStatus("success");
-      setForm({ name: "", organization: "", email: "", subject: "", message: "" });
+      setForm({ name: "", organization: "", email: "", phone: "", subject: "", message: "" });
     } catch {
       setStatus("error");
     }
@@ -141,22 +143,21 @@ const API = `${import.meta.env.VITE_API_URL}`;
         url="https://www.tibeb.com/contact"
       />
       {/* ── HERO ── */}
-      <section className="relative pt-[78px] md:pt-[100px] overflow-hidden min-h-[500px] md:min-h-[600px]">
+      <section className="relative pt-[78px] md:pt-[100px] overflow-hidden min-h-[300px] md:min-h-[600px]">
               {/* Full Background Image */}
-              <div className="absolute inset-0 z-0">
+              <div className="fixed inset-0 z-0">
                 <img 
                   src={all}
                   alt="Consultant Team"
-                  className="w-full h-full object-cover fixed"
+                  className="w-full h-auto pt-16 md:pt-0 md:h-full md:object-cover  "
                 />
                 <div className="absolute inset-0 bg-black/10"></div>
               </div>
-
             {/* Content - Centered at Bottom */}
-<div className="relative z-10 max-w-7xl mx-auto px-4 h-full flex  justify-center py-50">
+<div className="relative z-10 max-w-7xl mx-auto px-4 h-auto md:h-full flex  justify-center md:py-80 pt-30">
   <div className="max-w-sm bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-4 shadow-2xl text-center">
     {/* Title */}
-    <h1 className="text-xl md:text-4xl font-bold text-[#2C3E50] mb-3 leading-tight">
+    <h1 className="text-xl md:text-4xl font-bold text-[#2C3E50] mb-6 leading-tight">
       Let's <span className="text-[#D4A373]">Work Together</span>
     </h1>
     {/* Description */}
@@ -166,6 +167,7 @@ const API = `${import.meta.env.VITE_API_URL}`;
     </p>
   </div>
 </div>
+
       </section>
 
     {/* ── CLIENT TYPE SELECTOR ── */}

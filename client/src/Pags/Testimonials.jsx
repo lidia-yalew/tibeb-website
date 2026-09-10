@@ -23,7 +23,7 @@ export default function Testimonials() {
   });
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
-  const API = `${import.meta.env.VITE_API_URL}`;
+  const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
   
   // Pagination state
   const [visibleCount, setVisibleCount] = useState(6);
@@ -31,7 +31,7 @@ export default function Testimonials() {
 
   useEffect(() => {
     // Fetch ONLY published testimonials (status: approved, is_published: true)
-    axios.get(`${API}/testimonials/published`)
+    axios.get(`${API}/testimonials`)
       .then((res) => setTestimonials(res.data))
       .catch(console.error)
       .finally(() => setLoading(false));
@@ -128,7 +128,7 @@ export default function Testimonials() {
               Real feedback from organizations and partners we've worked with across Ethiopia.
             </p>
             <div className="flex items-center gap-2">
-              <button onClick={() => setShowForm(true)} className="px-12 mx-auto py-1.5 bg-primary text-white font-semibold rounded-full hover:bg-[#C4956A] transition-all duration-300 text-xs shadow-md">
+              <button onClick={() => setShowForm(true)} className="px-12 mx-auto py-1.5 bg-primary text-white font-semibold rounded-full hover:bg-[#C4956A] transition-all duration-300 text-xl shadow-md animate-bounce ">
                 Share Your Story
               </button>
             </div>

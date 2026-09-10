@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { useAuth } from "../Context/AuthContext";
 import logo from "../assets/Img/logo.png"
 
@@ -7,14 +8,16 @@ import logo from "../assets/Img/logo.png"
 const navItems = [
   { path: "/admin/dashboard", icon: "📊", label: "Dashboard" },
   { path: "/admin/team", icon: "👥", label: "Manage Team" },
-  { path: "/admin/portfolio", icon: "📋", label: "Portfolio" },
-  { path: "/admin/testimonials", icon: "💬", label: "Testimonials" },
-  { path: "/admin/messages", icon: "📬", label: "Messages" },
+  { path: "/admin/portfolio", icon: "💼", label: "Portfolio" },
+  { path: "/admin/blog", icon: "📰", label: "Manage Blog/News" },
+  { path: "/admin/ai-knowledge", icon: "🧠", label: "AI Knowledge Base" },
+  { path: "/admin/testimonials", icon: "⭐", label: "Testimonials" },
+  { path: "/admin/messages", icon: "✉️", label: "Messages" },
 ];
 
 const profileMenuItems = [
   { path: "/admin/profile", icon: "👤", label: "My Profile" },
- { path: "/admin/AddAdmin", icon: "👤", label: "Add Admins", superAdminOnly: true },
+  { path: "/admin/AddAdmin", icon: "👤", label: "Add Admins", superAdminOnly: true },
   { path: "/admin/settings", icon: "⚙️", label: "Settings" },
 ];
 
@@ -27,6 +30,33 @@ export default function AdminLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const profileRef = useRef(null);
+  
+  const [pendingTestimonials, setPendingTestimonials] = useState(0);
+  const [unreadMessages, setUnreadMessages] = useState(0);
+  const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
+
+  // Fetch pending testimonials count & unread messages count
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token || !user) return;
+    
+    axios.get(`${API}/admin/testimonials/admin`, { headers: { Authorization: `Bearer ${token}` } })
+      .then(res => {
+        if (Array.isArray(res.data)) {
+          const unpublishedCount = res.data.filter(t => !t.is_published).length;
+          setPendingTestimonials(unpublishedCount);
+        }
+      })
+      .catch(console.error);
+
+    axios.get(`${API}/admin/contacts`, { headers: { Authorization: `Bearer ${token}` } })
+      .then(res => {
+        const list = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+        const unread = list.filter(m => (m.status || 'unread').toLowerCase() === 'unread').length;
+        setUnreadMessages(unread);
+      })
+      .catch(console.error);
+  }, [location.pathname, user]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -69,7 +99,7 @@ export default function AdminLayout() {
 
   const currentPage =
     navItems.find((n) => n.path === location.pathname)?.label ||
-    
+
     profileMenuItems.find((n) => location.pathname === n.path)?.label ||
     "Admin";
 
@@ -96,9 +126,8 @@ export default function AdminLayout() {
 
       {/* ── SIDEBAR ── */}
       <aside
-        className={`fixed md:sticky top-0 left-0 flex flex-col transition-all duration-300 flex-shrink-0 h-screen overflow-y-auto z-50 ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
-        }`}
+        className={`fixed md:sticky top-0 left-0 flex flex-col transition-all duration-300 flex-shrink-0 h-screen overflow-y-auto z-50 ${sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+          }`}
         style={{
           width: sidebarOpen ? "280px" : "72px",
           minHeight: "100vh",
@@ -137,7 +166,23 @@ export default function AdminLayout() {
               >
                 <span className="text-lg md:text-xl flex-shrink-0">{item.icon}</span>
                 {sidebarOpen && (
-                  <span className="text-xs md:text-sm font-medium transition-colors truncate">{item.label}</span>
+                  <span className="text-xs md:text-sm font-medium transition-colors truncate flex-1">{item.label}</span>
+                )}
+                {item.label === "Testimonials" && pendingTestimonials > 0 && sidebarOpen && (
+                  <span className="ml-auto bg-yellow-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow-sm">
+                    {pendingTestimonials} Unpublished
+                  </span>
+                )}
+                {item.label === "Testimonials" && pendingTestimonials > 0 && !sidebarOpen && (
+                  <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-yellow-500 rounded-full shadow-sm" />
+                )}
+                {item.label === "Messages" && unreadMessages > 0 && sidebarOpen && (
+                  <span className="ml-auto bg-red-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow-sm animate-pulse">
+                    {unreadMessages} New
+                  </span>
+                )}
+                {item.label === "Messages" && unreadMessages > 0 && !sidebarOpen && (
+                  <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-red-500 rounded-full shadow-sm animate-pulse" />
                 )}
                 {isActive && sidebarOpen && (
                   <div className="absolute right-2 md:right-3 w-1.5 h-6 md:h-8 rounded-full" style={{ background: "var(--gradient-primary)" }} />
@@ -180,9 +225,9 @@ export default function AdminLayout() {
             style={{ background: "var(--card-bg)", border: "1px solid var(--border-color)", color: "var(--text-primary)" }}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-              <line x1="3" y1="6" x2="21" y2="6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-              <line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-              <line x1="3" y1="18" x2="21" y2="18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              <line x1="3" y1="6" x2="21" y2="6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              <line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              <line x1="3" y1="18" x2="21" y2="18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
             </svg>
           </button>
 
@@ -209,13 +254,13 @@ export default function AdminLayout() {
               {isDark ? (
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                   <path d="M12 3v1M12 20v1M3 12H2M22 12h-1M5.6 5.6l.7.7M17.7 17.7l.7.7M5.6 18.4l.7-.7M17.7 6.3l.7-.7"
-                    stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                  <circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="2"/>
+                    stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                  <circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="2" />
                 </svg>
               ) : (
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                   <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"
-                    stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               )}
             </button>
@@ -234,18 +279,18 @@ export default function AdminLayout() {
                   {user?.name?.charAt(0) || "A"}
                 </div>
                 <div className="text-left hidden sm:block">
-  <div className="text-xs md:text-sm font-semibold truncate max-w-[80px]" style={{ color: "var(--text-primary)" }}>
-    {user?.name || "Admin"}
-  </div>
- <div className="text-[10px] font-semibold tracking-wide mt-1" style={{ color: "var(--accent)" }}>
-  {user?.role?.toUpperCase() || "ADMIN"}
-</div>
-</div>
+                  <div className="text-xs md:text-sm font-semibold truncate max-w-[80px]" style={{ color: "var(--text-primary)" }}>
+                    {user?.name || "Admin"}
+                  </div>
+                  <div className="text-[10px] font-semibold tracking-wide mt-1" style={{ color: "var(--accent)" }}>
+                    {user?.role?.toUpperCase() || "ADMIN"}
+                  </div>
+                </div>
                 <svg
                   width="12" height="12" viewBox="0 0 12 12" fill="none"
                   className={`hidden sm:block transition-transform duration-200 ${isProfileOpen ? "rotate-180" : ""}`}
                 >
-                  <path d="M2 4l4 4 4-4" stroke="var(--text-primary)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M2 4l4 4 4-4" stroke="var(--text-primary)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </button>
 
@@ -278,32 +323,32 @@ export default function AdminLayout() {
                     </div>
                   </div>
 
-                 {/* Menu items */}
-<div className="py-2">
-  {profileMenuItems
-    .filter((item) => !item.superAdminOnly || user?.role === "Super Admin")
-    .map((item) => {
-      const isActive = location.pathname === item.path;
-      return (
-        <Link
-          key={item.path}
-          to={item.path}
-          onClick={() => setIsProfileOpen(false)}
-          className="flex items-center gap-3 px-4 md:px-5 py-2.5 md:py-3 text-sm transition-colors"
-          style={{
-            color: isActive ? "var(--accent)" : "var(--text-secondary)",
-            background: isActive ? "var(--nav-active-bg)" : "transparent",
-          }}
-        >
-          <span className="text-lg">{item.icon}</span>
-          <span>{item.label}</span>
-          {isActive && (
-            <div className="ml-auto w-2 h-2 rounded-full" style={{ background: "var(--accent)" }} />
-          )}
-        </Link>
-      );
-    })}
-</div>
+                  {/* Menu items */}
+                  <div className="py-2">
+                    {profileMenuItems
+                      .filter((item) => !item.superAdminOnly || user?.role === "Super Admin")
+                      .map((item) => {
+                        const isActive = location.pathname === item.path;
+                        return (
+                          <Link
+                            key={item.path}
+                            to={item.path}
+                            onClick={() => setIsProfileOpen(false)}
+                            className="flex items-center gap-3 px-4 md:px-5 py-2.5 md:py-3 text-sm transition-colors"
+                            style={{
+                              color: isActive ? "var(--accent)" : "var(--text-secondary)",
+                              background: isActive ? "var(--nav-active-bg)" : "transparent",
+                            }}
+                          >
+                            <span className="text-lg">{item.icon}</span>
+                            <span>{item.label}</span>
+                            {isActive && (
+                              <div className="ml-auto w-2 h-2 rounded-full" style={{ background: "var(--accent)" }} />
+                            )}
+                          </Link>
+                        );
+                      })}
+                  </div>
 
                   {/* Logout */}
                   <div className="border-t px-3 md:px-4 py-2" style={{ borderColor: "var(--border-color)" }}>

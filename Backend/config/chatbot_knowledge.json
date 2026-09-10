@@ -1,0 +1,107 @@
+{
+  "company_name": "Tamcon Software Solutions PLC",
+  "about": "TAMCON Software Solutions PLC builds the mission-critical software powering Ethiopia's digital transformation. Founded in 2024 from a partnership between Tamesol Communications and Convex ICT Technologies, TAMCON engineers secure, highly scalable enterprise and fintech platforms capable of handling massive daily transaction volumes. The company's flagship project, digitizing the Ethiopian Lottery Service, onboarded over 3.5 million registered users within a year of launch. TAMCON specializes in fintech and payment integrations, scalable cloud infrastructure, omnichannel (web + POS hardware) deployments, and inclusive, multilingual user experiences for the public and financial sectors.",
+  "year_founded": 2024,
+  "number_of_employees": 78,
+  "contact": {
+    "email": null,
+    "phone": null,
+    "address": "Addis Ababa, Kirkos Subcity, W02, Bedesta Building, 4th & 9th Floor (Global HQ)",
+    "additional_office": "Addis Ababa, Kirkos Subcity, W02, Mega Building, 3rd Floor, Office 01-04",
+    "website": "www.tamcon.et",
+    "working_hours": null
+  },
+  "vision": "To be the foundational technological backbone of Ethiopia's digital economy, engineering the secure, scalable, and inclusive software infrastructure that powers nationwide modernization.",
+  "mission": "We turn national digitization strategies into reliable operational realities. Day-to-day, we engineer, deploy, and maintain battle-tested enterprise and fintech platforms capable of handling massive transactional volume, bridging the gap between high-level policy and real-world execution for public and financial institutions.",
+  "core_values": [
+    "Operational Resilience (Engineering Excellence)",
+    "Uncompromising Security & Integrity",
+    "Digital Inclusivity",
+    "Execution over Fluff"
+  ],
+  "services": [
+    {
+      "name": "Fintech & Payment Integrations",
+      "description": "Secure payment infrastructure connecting with Ethiopia's digital payment ecosystem, including major mobile money platforms and digital wallets, with automated transaction verification for financial integrity and audit readiness."
+    },
+    {
+      "name": "Scalable Cloud Infrastructure",
+      "description": "Backend architectures hosted on secure, highly scalable environments using industry-grade encryption and redundant server configurations to guarantee reliability and zero data loss, even under high-volume traffic and peak transactional periods."
+    },
+    {
+      "name": "Omnichannel Deployments",
+      "description": "Bridging the digital and physical divide by integrating web-based software with physical hardware, such as Point of Sale (POS) networks, for comprehensive nationwide reach and operational continuity."
+    },
+    {
+      "name": "Inclusive & Localized UX",
+      "description": "Mobile-responsive designs optimized for smartphones with extensive multilingual support, deploying interfaces in multiple local Ethiopian languages to ensure nationwide usability regardless of regional or literacy barriers."
+    }
+  ],
+  "target_audience": {
+    "primary": [
+      "IT managers and CTOs evaluating vendors",
+      "Business owners seeking software development services",
+      "Procurement officers at companies and government institutions",
+      "Project managers looking for technical partners"
+    ],
+    "secondary": [
+      "Government and public institutions",
+      "Potential employees and tech talent",
+      "Investors and partners",
+      "Existing clients"
+    ]
+  },
+  "history": "TAMCON Software Solutions PLC was founded on a vision to bring global technological best practices to Ethiopia while solving on-the-ground challenges of the local market. The company originated from a strategic partnership between Tamesol Communications (an established Ethiopian company known for pioneering digital solutions and large-scale campaigns) and Convex ICT Technologies (a global provider of scalable, secure cloud and fintech infrastructure serving over 85 operators worldwide). TAMCON's first major undertaking was modernizing the Ethiopian Lottery Service, transforming a paper-based operation into a secure, transparent, fully-featured web-based platform supporting 8 major Ethiopian languages and integrating with Ethiopia's digital payment infrastructure, including TeleBirr. Within 6 months of launch, the platform acquired over 3,500,000 registered users, the fastest adoption of its kind in the country's sector. Today, TAMCON operates from its expanded footprint in the Bedesta Building with dedicated units in Software Engineering, UI/UX, Security, and Systems Integration.",
+  "notable_achievements": [
+    "Digitized the Ethiopian Lottery Service, transforming a paper-based operation into a secure, transparent web-based ecosystem.",
+    "Onboarded over 3,500,000 registered users within 6 months of platform launch.",
+    "Built support for 8 major Ethiopian languages for nationwide accessibility.",
+    "Integrated with Ethiopia's digital payment infrastructure including TeleBirr.",
+    "Bridged digital and physical channels via integration with Point of Sale (POS) machines and ticketing hardware."
+  ],
+  "management_team": [
+    { "name": "Solomon Kebere", "title": "Chief Executive Officer" },
+    { "name": "Michael Bekele", "title": "Deputy Chief Executive Officer" },
+    { "name": "Dr. Animaw Kerie", "title": "Chief Technology Officer" },
+    { "name": "Ermias Gebresillassie", "title": "Deputy of Technology and Innovation Officer" },
+    { "name": "Dawit Benti", "title": "Program Officer" },
+    { "name": "Abenezer Teferi", "title": "Operational Director" },
+    { "name": "Sishah Zemmedhun", "title": "Marketing Director" },
+    { "name": "Dagmawi Tessema", "title": "Public Relations & Communication Officer" },
+    { "name": "Haymanot Tadesse", "title": "Human Resource Manager" }
+  ],
+  "faqs": [
+    {
+      "question": "What does Tamcon Software Solutions do?",
+      "answer": "TAMCON builds mission-critical software for Ethiopia's public and financial sectors, specializing in secure, highly scalable enterprise platforms, fintech payment integrations, and omnichannel deployments that connect cloud software with physical hardware like POS systems."
+    },
+    {
+      "question": "When was Tamcon founded?",
+      "answer": "Tamcon Software Solutions PLC was founded in 2024, originating from a partnership between Tamesol Communications and Convex ICT Technologies."
+    },
+    {
+      "question": "Where is Tamcon located?",
+      "answer": "Tamcon's global headquarters is in Addis Ababa, Kirkos Subcity, W02, Bedesta Building (4th & 9th Floor), with an additional office in the Mega Building, 3rd Floor."
+    },
+    {
+      "question": "How many people work at Tamcon?",
+      "answer": "Tamcon Software Solutions has 78 employees."
+    },
+    {
+      "question": "What is Tamcon's most notable project?",
+      "answer": "Tamcon's flagship project is the digitization of the Ethiopian Lottery Service, which onboarded over 3.5 million registered users within a year of launch and supports 8 major Ethiopian languages."
+    },
+    {
+      "question": "Does Tamcon support mobile money payments like TeleBirr?",
+      "answer": "Yes, Tamcon integrates its platforms with Ethiopia's digital payment infrastructure, including major mobile money platforms like TeleBirr, for secure, automated transactions."
+    },
+    {
+      "question": "Who is the CEO of Tamcon?",
+      "answer": "Solomon Kebere is the Chief Executive Officer of Tamcon Software Solutions PLC."
+    },
+    {
+      "question": "Does Tamcon build multilingual or accessible platforms?",
+      "answer": "Yes, Tamcon prioritizes digital inclusivity, building mobile-responsive platforms with multilingual support across multiple Ethiopian languages to ensure nationwide usability."
+    }
+  ]
+}

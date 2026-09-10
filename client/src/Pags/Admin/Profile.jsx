@@ -10,7 +10,7 @@ export default function Profile() {
   const [toast, setToast] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
 
-  const API = `${import.meta.env.VITE_API_URL}`;
+  const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
 
   const [form, setForm] = useState({
     name: "",
@@ -59,7 +59,14 @@ export default function Profile() {
     e.preventDefault();
     setLoading(true);
     try {
-      await axios.put(`${API}/auth/profile`, form, {
+      const parts = form.name.split(" ");
+      const firstName = parts[0] || form.name;
+      const lastName = parts.slice(1).join(" ") || " ";
+
+      await axios.put(`${API}/admin/me`, {
+        first_name: firstName,
+        last_name: lastName,
+      }, {
         headers: { Authorization: `Bearer ${token}` },
       });
       showToast("Profile updated successfully!", "success");
@@ -84,8 +91,8 @@ export default function Profile() {
     setLoading(true);
     try {
       await axios.put(
-        `${API}/auth/change-password`,
-        { currentPassword: passwords.current, newPassword: passwords.newPass },
+        `${API}/admin/me/password`,
+        { old_password: passwords.current, new_password: passwords.newPass },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       showToast("Password changed successfully!", "success");

@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { lazy, Suspense } from 'react' // ← ADD THIS
+import { lazy, Suspense } from 'react'
 import { AuthProvider } from './Context/AuthContext'
 import Navbar from './Componet/Navbar'
 import AdminLayout from './Layout/AdminLayout'
@@ -7,20 +7,24 @@ import ProtectedRoute from './Componet/ProtactedRout'
 import Login from './Pags/Admin/Login'
 import ForgotPassword from "./Pags/Admin/ForgotPassword";
 import ResetPassword from "./Pags/Admin/ResetPassword";
+import ScrollToTop from "./Componet/ScrollToTop";
 
-// ✅ ADD LAZY LOADING FOR ALL PAGES
+// LAZY LOADING FOR ALL PAGES
 const Home = lazy(() => import('./Pags/Home'))
 const About = lazy(() => import('./Pags/About'))
 const Services = lazy(() => import('./Pags/Service'))
-const Team = lazy(() => import('./Pags/team'))
 const Portfolio = lazy(() => import('./Pags/Portfolio'))
 const Testimonials = lazy(() => import('./Pags/Testimonials'))
 const Contact = lazy(() => import('./Pags/Contact'))
+const Blog = lazy(() => import('./Pags/Blog'))
 
+// LAZY LOADING FOR ADMIN CMS PAGES
 const Dashboard = lazy(() => import('./Pags/Admin/Dashboard'))
 const ManageTeam = lazy(() => import('./Pags/Admin/ManageTeam'))
 const ManagePortfolio = lazy(() => import('./Pags/Admin/ManagePortfolio'))
 const ManageTestimonials = lazy(() => import('./Pags/Admin/ManageTestimonials'))
+const ManageBlog = lazy(() => import('./Pags/Admin/ManageBlog'))
+const ManageAIKnowledge = lazy(() => import('./Pags/Admin/ManageAIKnowledge'))
 const Messages = lazy(() => import('./Pags/Admin/Messages'))
 const Profile = lazy(() => import('./Pags/Admin/Profile'))
 const Settings = lazy(() => import('./Pags/Admin/Settings'))
@@ -44,6 +48,7 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
+        <ScrollToTop />
         <Suspense fallback={<PageLoader />}>
           <Routes>
             {/* Public routes with Navbar */}
@@ -51,13 +56,15 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/about" element={<About />} />
               <Route path="/services" element={<Services />} />
-              <Route path="/team" element={<Team />} />
               <Route path="/portfolio" element={<Portfolio />} />
               <Route path="/testimonials" element={<Testimonials />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/blog" element={<Blog />} />
             </Route>
 
+            {/* Admin Login & Password Recovery */}
             <Route path="/admin" element={<Login />} />
+            <Route path="/admin/login" element={<Login />} />
             <Route path="/admin/forgot-password" element={<ForgotPassword />} />
             <Route path="/admin/reset-password" element={<ResetPassword />} />
 
@@ -68,6 +75,8 @@ function App() {
                 <Route path="/admin/team" element={<ManageTeam />} />
                 <Route path="/admin/portfolio" element={<ManagePortfolio />} />
                 <Route path="/admin/testimonials" element={<ManageTestimonials />} />
+                <Route path="/admin/blog" element={<ManageBlog />} />
+                <Route path="/admin/ai-knowledge" element={<ManageAIKnowledge />} />
                 <Route path="/admin/messages" element={<Messages />} />
                 <Route path="/admin/profile" element={<Profile />} />
                 <Route path="/admin/AddAdmin" element={<AddAdmin />} />

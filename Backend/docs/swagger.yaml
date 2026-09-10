@@ -1,0 +1,1749 @@
+definitions:
+  controller.AdminPostWithImagesItem:
+    properties:
+      images:
+        items:
+          $ref: '#/definitions/domain.Image'
+        type: array
+      post:
+        $ref: '#/definitions/domain.BlogNews'
+    type: object
+  controller.AdminProductResponse:
+    properties:
+      category:
+        type: string
+      created_at: {}
+      description:
+        type: string
+      display_order:
+        type: integer
+      id:
+        type: string
+      image:
+        $ref: '#/definitions/controller.ImagesResponse'
+      is_published:
+        type: boolean
+      name:
+        type: string
+      updated_at: {}
+      website_url:
+        type: string
+    type: object
+  controller.AdminServiceResponse:
+    properties:
+      description:
+        type: string
+      display_order:
+        type: integer
+      features:
+        items:
+          type: string
+        type: array
+      id:
+        type: string
+      images:
+        items:
+          $ref: '#/definitions/domain.Image'
+        type: array
+      is_published:
+        type: boolean
+      title:
+        type: string
+    type: object
+  controller.ImagesResponse:
+    properties:
+      is_cover:
+        type: boolean
+      url:
+        type: string
+    type: object
+  controller.PostWithImagesItem:
+    properties:
+      images:
+        items:
+          $ref: '#/definitions/controller.ImagesResponse'
+        type: array
+      post:
+        $ref: '#/definitions/domain.BlogNews'
+    type: object
+  controller.ProductResponse:
+    properties:
+      category:
+        type: string
+      created_at: {}
+      description:
+        type: string
+      display_order:
+        type: integer
+      id:
+        type: string
+      image:
+        $ref: '#/definitions/controller.ImagesResponse'
+      is_published:
+        type: boolean
+      name:
+        type: string
+      updated_at: {}
+      website_url:
+        type: string
+    type: object
+  controller.ServiceResponse:
+    properties:
+      description:
+        type: string
+      display_order:
+        type: integer
+      features:
+        items:
+          type: string
+        type: array
+      id:
+        type: string
+      images:
+        items:
+          $ref: '#/definitions/controller.ImagesResponse'
+        type: array
+      is_published:
+        type: boolean
+      title:
+        type: string
+    type: object
+  controller.UpdateStatusRequest:
+    properties:
+      status:
+        $ref: '#/definitions/domain.MessageStatus'
+    required:
+    - status
+    type: object
+  controller.UpdateTestimonialRequest:
+    properties:
+      company_name:
+        type: string
+      content:
+        type: string
+      display_order:
+        type: integer
+      is_featured:
+        type: boolean
+      is_published:
+        type: boolean
+      reviewer_name:
+        type: string
+      reviewer_role:
+        type: string
+    type: object
+  controller.chatResponseSuccess:
+    properties:
+      reply:
+        example: Hello! How can I help you today?
+        type: string
+      success:
+        default: true
+        type: boolean
+    type: object
+  controller.loginRequest:
+    properties:
+      email:
+        example: admin@gmail.com
+        type: string
+      password:
+        example: admin@1234
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  controller.loginResponse:
+    properties:
+      data:
+        properties:
+          access_token:
+            type: string
+          user:
+            $ref: '#/definitions/domain.StaffUser'
+        type: object
+      success:
+        default: true
+        type: boolean
+    type: object
+  controller.logoutResponse:
+    properties:
+      message:
+        type: string
+      success:
+        default: true
+        type: boolean
+    type: object
+  controller.passwordResponse:
+    properties:
+      message:
+        default: Password updated successfully
+        type: string
+      success:
+        default: true
+        type: boolean
+    type: object
+  controller.profileResponse:
+    properties:
+      data:
+        $ref: '#/definitions/domain.StaffUser'
+      success:
+        default: true
+        type: boolean
+    type: object
+  controller.refreshResponse:
+    properties:
+      data:
+        properties:
+          access_token:
+            type: string
+        type: object
+      success:
+        default: true
+        type: boolean
+    type: object
+  controller.updatePasswordRequest:
+    properties:
+      new_password:
+        minLength: 6
+        type: string
+      old_password:
+        type: string
+    required:
+    - new_password
+    - old_password
+    type: object
+  controller.updateProfileRequest:
+    properties:
+      first_name:
+        type: string
+      last_name:
+        type: string
+    required:
+    - first_name
+    - last_name
+    type: object
+  domain.BlogNews:
+    properties:
+      author_name:
+        type: string
+      category:
+        type: string
+      content:
+        type: string
+      created_at:
+        type: string
+      display_order:
+        type: integer
+      excerpt:
+        type: string
+      id:
+        type: string
+      is_published:
+        type: boolean
+      published_at:
+        type: string
+      slug:
+        type: string
+      source:
+        type: string
+      title:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  domain.ChatMessage:
+    properties:
+      content:
+        type: string
+      role:
+        type: string
+    type: object
+  domain.ChatRequest:
+    properties:
+      history:
+        items:
+          $ref: '#/definitions/domain.ChatMessage'
+        type: array
+      message:
+        type: string
+    required:
+    - history
+    - message
+    type: object
+  domain.ContactMessage:
+    properties:
+      email:
+        maxLength: 255
+        type: string
+      id:
+        type: string
+      message:
+        type: string
+      name:
+        maxLength: 150
+        type: string
+      organization:
+        maxLength: 255
+        type: string
+      phone:
+        maxLength: 50
+        type: string
+      status:
+        $ref: '#/definitions/domain.MessageStatus'
+      subject:
+        maxLength: 300
+        type: string
+      submitted_at:
+        type: string
+    required:
+    - email
+    - message
+    - name
+    type: object
+  domain.EntityType:
+    enum:
+    - product
+    - blog_news
+    - event
+    - service
+    - testimonial
+    type: string
+    x-enum-varnames:
+    - EntityProduct
+    - EntityBlogNews
+    - EntityEvent
+    - EntityService
+    - EntityTestimonial
+  domain.ErrorDetails:
+    properties:
+      code:
+        type: string
+      details:
+        type: string
+    type: object
+  domain.ErrorResponse:
+    properties:
+      error:
+        $ref: '#/definitions/domain.ErrorDetails'
+      message:
+        default: Error
+        type: string
+      success:
+        default: false
+        type: boolean
+    type: object
+  domain.Image:
+    properties:
+      caption:
+        type: string
+      cloudinary_public_id:
+        type: string
+      created_at:
+        type: string
+      display_order:
+        type: integer
+      entity_id:
+        type: string
+      entity_type:
+        $ref: '#/definitions/domain.EntityType'
+      id:
+        type: string
+      is_cover:
+        type: boolean
+      url:
+        type: string
+    type: object
+  domain.MessageStatus:
+    enum:
+    - unread
+    - read
+    - replied
+    type: string
+    x-enum-varnames:
+    - StatusUnread
+    - StatusRead
+    - StatusReplied
+  domain.Product:
+    properties:
+      category:
+        type: string
+      created_at:
+        type: string
+      description:
+        type: string
+      display_order:
+        type: integer
+      id:
+        type: string
+      is_published:
+        type: boolean
+      name:
+        type: string
+      updated_at:
+        type: string
+      website_url:
+        type: string
+    required:
+    - name
+    type: object
+  domain.Service:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      display_order:
+        type: integer
+      features:
+        items:
+          type: string
+        type: array
+      id:
+        type: string
+      is_published:
+        type: boolean
+      title:
+        type: string
+      updated_at:
+        type: string
+    required:
+    - title
+    type: object
+  domain.StaffUser:
+    properties:
+      avatar_url:
+        type: string
+      created_at:
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: string
+      last_login_at:
+        type: string
+      last_name:
+        type: string
+      role:
+        type: string
+      status:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  domain.SuccessResponse:
+    properties:
+      data: {}
+      message:
+        default: Success
+        type: string
+      success:
+        default: true
+        type: boolean
+    type: object
+  domain.Testimonial:
+    properties:
+      company_name:
+        maxLength: 150
+        type: string
+      content:
+        type: string
+      created_at:
+        type: string
+      display_order:
+        type: integer
+      id:
+        type: string
+      is_featured:
+        type: boolean
+      is_published:
+        type: boolean
+      reviewer_name:
+        maxLength: 150
+        type: string
+      reviewer_role:
+        maxLength: 150
+        type: string
+      updated_at:
+        type: string
+    required:
+    - content
+    - reviewer_name
+    type: object
+  domain.TestimonialRequest:
+    properties:
+      company_name:
+        maxLength: 150
+        type: string
+      content:
+        type: string
+      display_order:
+        type: integer
+      is_featured:
+        type: boolean
+      is_published:
+        type: boolean
+      reviewer_name:
+        maxLength: 150
+        type: string
+      reviewer_role:
+        maxLength: 150
+        type: string
+    required:
+    - content
+    - reviewer_name
+    type: object
+info:
+  contact: {}
+paths:
+  /api/admin/blog-news:
+    get:
+      parameters:
+      - description: 'Filter by: blog or news'
+        in: query
+        name: category
+        type: string
+      - description: 'Filter by: published or unpublished'
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.SuccessResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/controller.AdminPostWithImagesItem'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List posts (admin)
+      tags:
+      - admin blog_news
+    post:
+      consumes:
+      - multipart/form-data
+      description: Create a new post with cover image and optional gallery images
+      parameters:
+      - description: 'Post type: blog or news'
+        in: formData
+        name: category
+        required: true
+        type: string
+      - description: Post title
+        in: formData
+        name: title
+        required: true
+        type: string
+      - description: Post content (HTML)
+        in: formData
+        name: content
+        required: true
+        type: string
+      - description: Author name
+        in: formData
+        name: author_name
+        required: true
+        type: string
+      - description: Short summary
+        in: formData
+        name: excerpt
+        type: string
+      - description: News source (news only)
+        in: formData
+        name: source
+        type: string
+      - description: Display order
+        in: formData
+        name: display_order
+        type: integer
+      - description: Publish immediately
+        in: formData
+        name: is_published
+        type: boolean
+      - description: Cover image
+        in: formData
+        name: cover
+        type: file
+      - description: Gallery images (multiple)
+        in: formData
+        name: gallery
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.BlogNews'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create blog or news post
+      tags:
+      - admin blog_news
+  /api/admin/blog-news/{id}:
+    delete:
+      parameters:
+      - description: Post ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete blog or news post
+      tags:
+      - admin blog_news
+    get:
+      parameters:
+      - description: Post ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.BlogNews'
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get post by ID (admin)
+      tags:
+      - admin blog_news
+    put:
+      consumes:
+      - multipart/form-data
+      description: Update post fields, replace cover, or add more gallery images
+      parameters:
+      - description: Post ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.BlogNews'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update blog or news post
+      tags:
+      - admin blog_news
+  /api/admin/blog-news/{id}/publish:
+    patch:
+      parameters:
+      - description: Post ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.BlogNews'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Toggle publish status
+      tags:
+      - admin blog_news
+  /api/admin/contacts:
+    get:
+      description: Retrieve all submitted contact messages for admin review
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.SuccessResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/domain.ContactMessage'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List all contact messages
+      tags:
+      - admin contact
+  /api/admin/contacts/{id}:
+    delete:
+      description: Delete a contact message by ID
+      parameters:
+      - description: Message ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete contact message
+      tags:
+      - admin contact
+  /api/admin/contacts/{id}/status:
+    put:
+      consumes:
+      - application/json
+      description: Update the read/replied status of a contact message
+      parameters:
+      - description: Message ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated status payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/controller.UpdateStatusRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.ContactMessage'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update message status
+      tags:
+      - admin contact
+  /api/admin/images/{id}:
+    delete:
+      description: Delete an image by ID
+      parameters:
+      - description: Image ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete image
+      tags:
+      - admin images
+  /api/admin/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate user and return JWT access token, and set refresh
+        token cookie
+      parameters:
+      - description: Login credentials
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/controller.loginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controller.loginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      summary: User Login
+      tags:
+      - auth
+  /api/admin/logout:
+    post:
+      description: Revoke the user refresh token and clear cookie
+      parameters:
+      - description: Revoke all sessions/devices
+        in: query
+        name: all
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controller.logoutResponse'
+      summary: User Logout
+      tags:
+      - auth
+  /api/admin/me:
+    get:
+      description: Get detailed profile information of the authenticated staff member
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controller.profileResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get current user profile
+      tags:
+      - profile
+    put:
+      consumes:
+      - application/json
+      description: Update the first and last name of the authenticated staff member
+      parameters:
+      - description: Profile update payload
+        in: body
+        name: profile
+        required: true
+        schema:
+          $ref: '#/definitions/controller.updateProfileRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controller.profileResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update user profile
+      tags:
+      - profile
+  /api/admin/me/password:
+    put:
+      consumes:
+      - application/json
+      description: Change the password of the authenticated staff member
+      parameters:
+      - description: Password update payload
+        in: body
+        name: password
+        required: true
+        schema:
+          $ref: '#/definitions/controller.updatePasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controller.passwordResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update user password
+      tags:
+      - profile
+  /api/admin/product:
+    post:
+      consumes:
+      - application/json
+      - multipart/form-data
+      description: Create a new product with details and cover image
+      parameters:
+      - description: Product name
+        in: formData
+        name: name
+        required: true
+        type: string
+      - description: Product description
+        in: formData
+        name: description
+        required: true
+        type: string
+      - description: Product category
+        in: formData
+        name: category
+        type: string
+      - description: Product website URL
+        in: formData
+        name: website_url
+        type: string
+      - description: Display order
+        in: formData
+        name: display_order
+        type: integer
+      - description: Publish status
+        in: formData
+        name: is_published
+        type: boolean
+      - description: Product cover image
+        in: formData
+        name: file
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.Product'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Add a new product
+      tags:
+      - admin product
+  /api/admin/products:
+    get:
+      description: Get all products including unpublished products
+      parameters:
+      - description: Filter only published products
+        in: query
+        name: published-only
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.SuccessResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/controller.AdminProductResponse'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get all products (admin)
+      tags:
+      - admin product
+  /api/admin/products/{id}:
+    delete:
+      description: Delete an existing product by ID
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete product
+      tags:
+      - admin product
+    patch:
+      consumes:
+      - application/json
+      - multipart/form-data
+      description: Update an existing product by ID
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Product name
+        in: formData
+        name: name
+        type: string
+      - description: Product description
+        in: formData
+        name: description
+        type: string
+      - description: Product category
+        in: formData
+        name: category
+        type: string
+      - description: Product website URL
+        in: formData
+        name: website_url
+        type: string
+      - description: Display order
+        in: formData
+        name: display_order
+        type: integer
+      - description: Publish status
+        in: formData
+        name: is_published
+        type: boolean
+      - description: Product cover image
+        in: formData
+        name: file
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.Product'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update product
+      tags:
+      - admin product
+  /api/admin/refresh:
+    post:
+      description: Generate a new access token using the refresh token cookie
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controller.refreshResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      summary: Refresh Access Token
+      tags:
+      - auth
+  /api/admin/service:
+    post:
+      consumes:
+      - application/json
+      - multipart/form-data
+      description: Create a new service with details and cover image
+      parameters:
+      - description: Service title
+        in: formData
+        name: title
+        required: true
+        type: string
+      - description: Service description
+        in: formData
+        name: description
+        required: true
+        type: string
+      - collectionFormat: multi
+        description: Service features
+        in: formData
+        items:
+          type: string
+        name: features
+        type: array
+      - description: Display order
+        in: formData
+        name: display_order
+        type: integer
+      - description: Publish status
+        in: formData
+        name: is_published
+        type: boolean
+      - description: Service cover image
+        in: formData
+        name: file
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.Service'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Add a new service
+      tags:
+      - admin service
+  /api/admin/services:
+    get:
+      description: Get all services including unpublished services
+      parameters:
+      - description: Filter only published services
+        in: query
+        name: published-only
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.SuccessResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/controller.AdminServiceResponse'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get all services (admin)
+      tags:
+      - admin service
+  /api/admin/services/{id}:
+    delete:
+      description: Delete an existing service by ID
+      parameters:
+      - description: Service ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete service
+      tags:
+      - admin service
+    patch:
+      consumes:
+      - application/json
+      - multipart/form-data
+      description: Update an existing service by ID
+      parameters:
+      - description: Service ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Service title
+        in: formData
+        name: title
+        type: string
+      - description: Service description
+        in: formData
+        name: description
+        type: string
+      - collectionFormat: multi
+        description: Service features
+        in: formData
+        items:
+          type: string
+        name: features
+        type: array
+      - description: Display order
+        in: formData
+        name: display_order
+        type: integer
+      - description: Publish status
+        in: formData
+        name: is_published
+        type: boolean
+      - description: Service cover image
+        in: formData
+        name: file
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.Service'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update service
+      tags:
+      - admin service
+  /api/admin/testimonials:
+    get:
+      description: Retrieve all testimonials with optional status filter
+      parameters:
+      - description: 'Filter by status: published, unpublished'
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.SuccessResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/domain.Testimonial'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List all testimonials (admin)
+      tags:
+      - admin testimonial
+    post:
+      consumes:
+      - application/json
+      description: Create a new reviewer testimonial with details
+      parameters:
+      - description: Testimonial request payload
+        in: body
+        name: testimonial
+        required: true
+        schema:
+          $ref: '#/definitions/domain.TestimonialRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.Testimonial'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a new testimonial
+      tags:
+      - admin testimonial
+  /api/admin/testimonials/{id}:
+    delete:
+      description: Delete an existing testimonial by ID
+      parameters:
+      - description: Testimonial ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete testimonial
+      tags:
+      - admin testimonial
+    get:
+      description: Get testimonial details by ID
+      parameters:
+      - description: Testimonial ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.Testimonial'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get testimonial details
+      tags:
+      - admin testimonial
+    put:
+      consumes:
+      - application/json
+      description: Update an existing testimonial by ID
+      parameters:
+      - description: Testimonial ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Testimonial update data
+        in: body
+        name: testimonial
+        required: true
+        schema:
+          $ref: '#/definitions/controller.UpdateTestimonialRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.Testimonial'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update testimonial
+      tags:
+      - admin testimonial
+  /api/admin/testimonials/{id}/publish:
+    patch:
+      description: Switch the publish state of a testimonial (Live <-> Draft)
+      parameters:
+      - description: Testimonial ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.Testimonial'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Toggle publish status
+      tags:
+      - admin testimonial
+  /api/blog-news:
+    get:
+      parameters:
+      - description: 'Filter by: blog or news'
+        in: query
+        name: category
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.SuccessResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/controller.PostWithImagesItem'
+                  type: array
+              type: object
+      summary: List published posts (public)
+      tags:
+      - blog_news
+  /api/blog-news/{slug}:
+    get:
+      parameters:
+      - description: Post slug
+        in: path
+        name: slug
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.BlogNews'
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      summary: Get post by slug (public)
+      tags:
+      - blog_news
+  /api/chat:
+    post:
+      consumes:
+      - application/json
+      description: Send a user message along with chat history to the Gemini chatbot
+      parameters:
+      - description: Chat prompt request payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/domain.ChatRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controller.chatResponseSuccess'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      summary: Send message to Chatbot
+      tags:
+      - chatbot
+  /api/contacts:
+    post:
+      consumes:
+      - application/json
+      description: Submit a contact/inquiry message from the contact form
+      parameters:
+      - description: Contact message details
+        in: body
+        name: message
+        required: true
+        schema:
+          $ref: '#/definitions/domain.ContactMessage'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.ContactMessage'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      summary: Submit contact message
+      tags:
+      - contact
+  /api/products:
+    get:
+      description: Get all published products available to users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.SuccessResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/controller.ProductResponse'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      summary: Get published products
+      tags:
+      - product
+  /api/services:
+    get:
+      description: Get all published services available to users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.SuccessResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/controller.ServiceResponse'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      summary: Get published services
+      tags:
+      - service
+  /api/testimonials:
+    get:
+      description: Retrieve all published testimonials for public users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/domain.SuccessResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/domain.Testimonial'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      summary: List published testimonials
+      tags:
+      - testimonial
+securityDefinitions:
+  BearerAuth:
+    description: 'Enter your JWT token as: Bearer <token>'
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
