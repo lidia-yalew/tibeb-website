@@ -189,10 +189,10 @@ func (a *authUsecase) ForgotPassword(ctx context.Context, email string) error {
 
 		auth := smtp.PlainAuth("", senderEmail, senderPass, "smtp.gmail.com")
 		to := []string{recipientEmail}
-		msg := []byte(fmt.Sprintf("To: %s\r\n"+
+		msg := fmt.Appendf(nil, "To: %s\r\n"+
 			"Subject: Password Reset Request\r\n"+
 			"\r\n"+
-			"Click the following link to reset your password. This link will expire in 15 minutes.\r\n\r\n%s\r\n", recipientEmail, resetLink))
+			"Click the following link to reset your password. This link will expire in 15 minutes.\r\n\r\n%s\r\n", recipientEmail, resetLink)
 
 		err := smtp.SendMail("smtp.gmail.com:587", auth, senderEmail, to, msg)
 		if err != nil {
@@ -228,6 +228,10 @@ func (a *authUsecase) ResetPassword(ctx context.Context, tokenStr, newPassword s
 	}
 	if currentPrefix != hashPrefix {
 		return errors.New("this password reset link has already been used")
+	}
+
+	if err := hasher.ValidatePasswordComplexity(newPassword); err != nil {
+		return err
 	}
 
 	hashedPassword, err := hasher.HashPassword(newPassword)

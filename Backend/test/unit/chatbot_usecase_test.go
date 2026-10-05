@@ -24,7 +24,7 @@ var _ = Describe("Chatbot Usecase", func() {
 
 	Describe("NewChatbotUsecase", func() {
 		It("should successfully load the knowledge base file and initialize", func() {
-			cbUsecase, err := usecase.NewChatbotUsecase("dummy-key")
+			cbUsecase, err := usecase.NewChatbotUsecase("dummy-key", nil)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(cbUsecase).NotTo(BeNil())
 		})
@@ -38,7 +38,7 @@ var _ = Describe("Chatbot Usecase", func() {
 					Skip("Skipping live Gemini API test: GEMINI_API_KEY is not set to a valid key")
 				}
 
-				cbUsecase, err := usecase.NewChatbotUsecase(apiKey)
+				cbUsecase, err := usecase.NewChatbotUsecase(apiKey, nil)
 				Expect(err).NotTo(HaveOccurred())
 
 				reply, err := cbUsecase.GenerateResponse(ctx, nil, "Who is the CEO of Tamcon?")
@@ -52,7 +52,7 @@ var _ = Describe("Chatbot Usecase", func() {
 					Skip("Skipping live Gemini API test: GEMINI_API_KEY is not set to a valid key")
 				}
 
-				cbUsecase, err := usecase.NewChatbotUsecase(apiKey)
+				cbUsecase, err := usecase.NewChatbotUsecase(apiKey, nil)
 				Expect(err).NotTo(HaveOccurred())
 
 				reply, err := cbUsecase.GenerateResponse(ctx, nil, "Can you tell me how to bake a chocolate cake?")

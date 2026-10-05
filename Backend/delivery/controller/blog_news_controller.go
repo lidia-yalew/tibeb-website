@@ -423,12 +423,9 @@ func (ctrl *BlogNewsController) List(c *gin.Context) {
 	for i, post := range posts {
 		dbImages, _ := ctrl.imageUsecase.ListByEntity(c.Request.Context(), domain.EntityBlogNews, post.ID)
 		images := []domain.Image{}
-
-		if dbImages != nil {
-			for _, img := range dbImages {
+		for _, img := range dbImages {
 				images = append(images, *img)
 			}
-		}
 
 		responseList[i] = AdminPostWithImagesItem{
 			Post:   &posts[i],
@@ -469,15 +466,12 @@ func (ctrl *BlogNewsController) GetPublished(c *gin.Context) {
 	for i, post := range posts {
 		dbImages, _ := ctrl.imageUsecase.ListByEntity(c.Request.Context(), domain.EntityBlogNews, post.ID)
 		images := []ImagesResponse{}
-
-		if dbImages != nil {
-			for _, img := range dbImages {
+		for _, img := range dbImages {
 				images = append(images, ImagesResponse{
 					URL:     img.URL,
 					IsCover: img.IsCover,
 				})
 			}
-		}
 
 		responseList[i] = PostWithImagesItem{
 			Post:   &posts[i],
@@ -573,3 +567,4 @@ func makeSlug(title string) string {
 	}
 	return fmt.Sprintf("%s-%s", s, uuid.New().String()[:8])
 }
+

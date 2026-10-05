@@ -103,7 +103,7 @@ func (ctrl *ProfileController) UpdateProfile(c *gin.Context) {
 
 type updatePasswordRequest struct {
 	OldPassword string `json:"old_password" binding:"required"`
-	NewPassword string `json:"new_password" binding:"required,min=6"`
+	NewPassword string `json:"new_password" binding:"required,min=8"`
 }
 
 
@@ -130,7 +130,7 @@ func (ctrl *ProfileController) UpdatePassword(c *gin.Context) {
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"success": false,
-			"error":   "Invalid request body (new password must be at least 6 characters)",
+			"error":   "Invalid request body (new password must be at least 8 characters)",
 		})
 		return
 	}
@@ -157,7 +157,7 @@ type createAdminRequest struct {
 	FirstName string `json:"first_name" binding:"required"`
 	LastName  string `json:"last_name" binding:"required"`
 	Email     string `json:"email" binding:"required,email"`
-	Password  string `json:"password" binding:"required,min=6"`
+	Password  string `json:"password" binding:"required,min=8"`
 	Role      string `json:"role" binding:"required"`
 }
 

@@ -75,7 +75,15 @@ func (u *staffUserUsecase) UpdatePassword(ctx context.Context, userID uuid.UUID,
 		return errors.New("Invalid password")
 	}
 
-	newHash, err := hasher.HashPassword(	newPassword)
+	if hasher.CheckPassword(newPassword, user.PasswordHash) {
+		return errors.New("New password must differ from current password")
+	}
+
+	if err := hasher.ValidatePasswordComplexity(newPassword); err != nil {
+		return err
+	}
+
+	newHash, err := hasher.HashPassword(newPassword)
 	if err != nil {
 		return err
 	}
@@ -106,6 +114,10 @@ func (u *staffUserUsecase) CreateAdmin(ctx context.Context, firstName, lastName,
 	}
 	if existing != nil {
 		return nil, errors.New("admin with this email already exists")
+	}
+
+	if err := hasher.ValidatePasswordComplexity(password); err != nil {
+		return nil, err
 	}
 
 	hashedPassword, err := hasher.HashPassword(password)

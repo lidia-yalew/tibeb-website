@@ -19,6 +19,7 @@ type mockUserRepo struct {
 	GetByEmailFunc func(ctx context.Context, email string) (*domain.StaffUser, error)
 	GetByIDFunc    func(ctx context.Context, id uuid.UUID) (*domain.StaffUser, error)
 	UpdateFunc     func(ctx context.Context, user *domain.StaffUser) error
+	GetAllFunc     func(ctx context.Context) ([]domain.StaffUser, error)
 }
 
 func (m *mockUserRepo) Create(ctx context.Context, user *domain.StaffUser) error { return nil }
@@ -30,6 +31,12 @@ func (m *mockUserRepo) GetByEmail(ctx context.Context, email string) (*domain.St
 }
 func (m *mockUserRepo) Update(ctx context.Context, user *domain.StaffUser) error {
 	return m.UpdateFunc(ctx, user)
+}
+func (m *mockUserRepo) GetAll(ctx context.Context) ([]domain.StaffUser, error) {
+	if m.GetAllFunc != nil {
+		return m.GetAllFunc(ctx)
+	}
+	return nil, nil
 }
 
 // --- Mock RefreshTokenRepository ---
