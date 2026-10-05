@@ -71,8 +71,8 @@ export default function Profile() {
       });
       showToast("Profile updated successfully!", "success");
       setIsEditing(false);
-    } catch {
-      showToast("Failed to update profile", "error");
+    } catch (error) {
+      showToast(error.response?.data?.error || "Failed to update profile", "error");
     } finally {
       setLoading(false);
     }
@@ -84,8 +84,8 @@ export default function Profile() {
       showToast("New passwords do not match", "error");
       return;
     }
-    if (passwords.newPass.length < 6) {
-      showToast("Password must be at least 6 characters", "error");
+    if (passwords.newPass.length < 8) {
+      showToast("Password must be at least 8 characters", "error");
       return;
     }
     setLoading(true);
@@ -97,8 +97,8 @@ export default function Profile() {
       );
       showToast("Password changed successfully!", "success");
       setPasswords({ current: "", newPass: "", confirm: "" });
-    } catch {
-      showToast("Failed to change password. Check your current password.", "error");
+    } catch (error) {
+      showToast(error.response?.data?.error || "Failed to change password.", "error");
     } finally {
       setLoading(false);
     }
@@ -312,7 +312,8 @@ export default function Profile() {
                 <p className="font-semibold mb-1" style={{ color: "var(--text-primary)" }}>
                   Password requirements
                 </p>
-                <p>• Minimum 6 characters</p>
+                <p>• Minimum 8 characters</p>
+                <p>• Must contain uppercase, lowercase, number & special character</p>
                 <p>• New password must differ from current</p>
               </div>
 

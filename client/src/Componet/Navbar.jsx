@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import logo from "../assets/Img/logo.png"
+import { useAuth } from "../Context/AuthContext";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -20,6 +21,7 @@ export default function Navbar() {
     return localStorage.getItem("theme") || "light";
   });
   const location = useLocation();
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -69,7 +71,9 @@ export default function Navbar() {
           {/* Desktop Nav */}
           <div className="hidden lg:flex items-center gap-3 flex-1 justify-center">
             {navLinks.map((link) => {
-              const isActive = location.pathname === link.href;
+              if (link.label === "Admin" && !isAuthenticated) return null;
+              
+              const isActive = location.pathname === link.href || (link.label === "Admin" && location.pathname.startsWith('/admin'));
               const isAdmin = link.label === "Admin";
 
               return (
@@ -149,7 +153,9 @@ export default function Navbar() {
             }}
           >
             {navLinks.map((link) => {
-              const isActive = location.pathname === link.href;
+              if (link.label === "Admin" && !isAuthenticated) return null;
+              
+              const isActive = location.pathname === link.href || (link.label === "Admin" && location.pathname.startsWith('/admin'));
               return (
                 <Link
                   key={link.label}

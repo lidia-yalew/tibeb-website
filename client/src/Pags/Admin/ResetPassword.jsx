@@ -26,8 +26,8 @@ const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
       setError("Passwords do not match.");
       return;
     }
-    if (newPassword.length < 6) {
-      setError("Password must be at least 6 characters.");
+    if (newPassword.length < 8) {
+      setError("Password must be at least 8 characters long and contain uppercase, lowercase, number, and special character.");
       return;
     }
 
@@ -99,8 +99,8 @@ const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     required
-                    minLength={6}
-                    placeholder="At least 6 characters"
+                    minLength={8}
+                    placeholder="At least 8 characters"
                     autoComplete="new-password"
                     className="w-full px-4 pr-12 py-3 rounded-xl border text-sm outline-none transition-all duration-200 bg-theme text-theme border-theme hover:border-primary focus:border-primary"
                   />
@@ -121,7 +121,7 @@ const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
-                  minLength={6}
+                  minLength={8}
                   placeholder="Re-enter your new password"
                   autoComplete="new-password"
                   className="w-full px-4 py-3 rounded-xl border text-sm outline-none transition-all duration-200 bg-theme text-theme border-theme hover:border-primary focus:border-primary"

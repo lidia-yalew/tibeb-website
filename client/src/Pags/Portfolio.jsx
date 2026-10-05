@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import portfolio from "../assets/Img/portfolio.png"
 import SEO from "../Componet/SEO";
-import test from "../assets/Img/test.png"
 
 const categories = [
   "Capacity Development and Training",
